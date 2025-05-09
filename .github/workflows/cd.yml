@@ -35,6 +35,6 @@ jobs:
 
       - name: Build and push Docker image to GHCR
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}/justsendapi
+          IMAGE_NAME=ghcr.io/justsend/justsendapi
           docker build -t $IMAGE_NAME:latest .
           docker push $IMAGE_NAME:latest
