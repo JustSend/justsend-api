@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class JustSendApiApplication
 
 fun main(args: Array<String>) {
-	runApplication<JustSendApiApplication>(*args)
+  runApplication<JustSendApiApplication>(*args)
 }

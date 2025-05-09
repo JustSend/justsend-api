@@ -1,0 +1,21 @@
+#!/bin/sh
+
+staged_files=$(git diff --staged --name-only)
+
+echo "🧹 Formatting code in staged files…"
+./gradlew ktlintFormat
+for file in $staged_files; do
+  if test -f "$file"; then
+    git add "$file"
+  fi
+done
+
+echo "🧹 Running ktlintCheck..."
+./gradlew ktlintCheck
+
+if [ $? -ne 0 ]; then
+  echo "❌ ktlintCheck failed. Please fix the issues before committing."
+  exit 1
+fi
+
+echo "✅ Pre-commit check passed successfully."
