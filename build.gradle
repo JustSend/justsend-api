@@ -3,6 +3,8 @@ plugins {
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.25'
 	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.jetbrains.kotlinx.kover' version '0.7.3'
+    id 'org.jlleitschuh.gradle.ktlint' version '11.5.0'
 }
 
 group = 'com.justsend'
@@ -36,3 +38,50 @@ kotlin {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+kover {
+    useJacoco()
+}
+
+koverReport {
+    verify {
+        rule {
+            bound {
+                minValue = 80
+            }
+        }
+        filters {
+            excludes {
+                classes("JustsendApiApplication.kt")
+                packages("controller")
+            }
+        }
+    }
+
+    defaults {
+        html {
+            onCheck = true
+        }
+    }
+}
+
+
+ktlint {
+    disabledRules = ['no-wildcard-imports', 'max-line-length']
+}
+
+tasks.register('installGitHook', Copy) {
+    def hookFile = file("hooks/pre-commit")
+    def gitHookFile = file(".git/hooks/pre-commit")
+
+    from(hookFile)
+    into(".git/hooks")
+    rename { "pre-commit" }
+
+    doLast {
+        gitHookFile.setExecutable(true)
+        println "✅ Installed pre-commit hook to .git/hooks/"
+    }
+}
+
+
