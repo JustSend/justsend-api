@@ -1,23 +1,20 @@
 package com.justsend.api.model
 
-class Wallet(private var balance: Int = 0) {
+class Wallet(private var balances: HashMap<Currency, Amount>) {
 
-  fun addBalance(amount: Int) {
-    if (amount < 0) {
-      throw IllegalArgumentException("Amount cannot be negative")
-    }
-    balance += amount
+  fun add(money: Money) {
+    require(money.amount >= 0.0) { "Amount cannot be negative" }
+    balances[money.currency] = balances.getOrDefault(money.currency, 0.0) + money.amount
   }
 
-  fun removeBalance(amount: Int) {
-    if (amount < 0) {
-      throw IllegalArgumentException("Amount cannot be negative")
+  fun remove(money: Money) {
+    require(money.amount >= 0.0) { "Amount cannot be negative" }
+    val currentAmount = balances.getOrDefault(money.currency, 0.0)
+    require(currentAmount >= money.amount) {
+      "Insufficient balance: trying to remove ${money.amount} from $currentAmount ${money.currency}"
     }
-    if (balance - amount < 0) {
-      throw IllegalArgumentException("Cannot remove balance $amount")
-    }
-    balance -= amount
+    balances[money.currency] = currentAmount - money.amount
   }
 
-  fun getBalance(): Int = balance
+  fun getBalance(currency: Currency): Double = balances.getOrDefault(currency, 0.0)
 }
