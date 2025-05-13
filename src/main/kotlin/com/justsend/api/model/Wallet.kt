@@ -2,7 +2,7 @@ package com.justsend.api.model
 
 class Wallet() {
 
-  private var balances = mutableMapOf<Currency, Double>()
+  private var balances = mutableMapOf<Currency, Amount>()
 
   fun add(money: Money) {
     require(money.amount >= 0.0) { "Amount cannot be negative" }
