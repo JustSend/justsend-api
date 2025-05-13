@@ -52,7 +52,7 @@ koverReport {
         }
         filters {
             excludes {
-                classes("JustsendApiApplication.kt")
+                classes("JustsendApiApplicationKt")
                 packages("controller")
             }
         }
