@@ -34,4 +34,29 @@ class WalletTests {
       wallet.addBalance(-10)
     }
   }
+
+  @Test
+  fun `removing 0 balance should be the same`() {
+    val wallet = Wallet()
+    wallet.addBalance(10)
+    wallet.removeBalance(0)
+    assert(wallet.getBalance() == 10)
+  }
+
+  @Test
+  fun `removing negative balance throw exception`() {
+    val wallet = Wallet()
+    assertThrows(IllegalArgumentException::class.java) {
+      wallet.removeBalance(-10)
+    }
+  }
+
+  @Test
+  fun `removing more balance than actual should throw error`() {
+    val wallet = Wallet()
+    wallet.addBalance(10)
+    assertThrows(IllegalArgumentException::class.java) {
+      wallet.removeBalance(20)
+    }
+  }
 }
