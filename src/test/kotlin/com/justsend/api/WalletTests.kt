@@ -1,7 +1,5 @@
 package com.justsend.api
 
-import com.justsend.api.model.Amount
-import com.justsend.api.model.Currency
 import com.justsend.api.model.Money
 import com.justsend.api.model.Wallet
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -9,8 +7,7 @@ import kotlin.test.Test
 
 class WalletTests {
 
-  val balances = HashMap<Currency, Amount>()
-  val wallet = Wallet(balances)
+  val wallet = Wallet()
   val usd = "USD"
   val ars = "ARS"
   val tenDollars = Money(usd, 10.00)

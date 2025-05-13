@@ -1,6 +1,8 @@
 package com.justsend.api.model
 
-class Wallet(private var balances: HashMap<Currency, Amount>) {
+class Wallet() {
+
+  private var balances = mutableMapOf<Currency, Double>()
 
   fun add(money: Money) {
     require(money.amount >= 0.0) { "Amount cannot be negative" }
