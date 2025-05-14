@@ -14,6 +14,8 @@ data class WalletEntity(
   @ElementCollection(fetch = FetchType.EAGER)
   val balances: Map<String, Double>
 ) {
+  constructor() : this(UUID.randomUUID().toString(), emptyMap())
+
   fun toWallet(): Wallet {
     val wallet = Wallet()
     balances.forEach { (currency, amount) ->
