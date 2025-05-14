@@ -18,5 +18,6 @@ class Wallet() {
     balances[money.currency] = currentAmount - money.amount
   }
 
-  fun getBalance(currency: Currency): Double = balances.getOrDefault(currency, 0.0)
+  fun getBalanceFor(currency: Currency): Double = balances.getOrDefault(currency, 0.0)
+  fun getAllBalances(): Map<String, Double> = balances.toMap()
 }
