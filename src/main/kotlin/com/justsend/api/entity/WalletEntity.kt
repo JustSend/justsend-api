@@ -6,13 +6,16 @@ import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import java.util.UUID
 
 @Entity
 data class WalletEntity(
-  @Id val id: String,
+  @Id val id: String = UUID.randomUUID().toString(),
   @ElementCollection(fetch = FetchType.EAGER)
   val balances: Map<String, Double>
 ) {
+  constructor() : this(UUID.randomUUID().toString(), emptyMap())
+
   fun toWallet(): Wallet {
     val wallet = Wallet()
     balances.forEach { (currency, amount) ->

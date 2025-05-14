@@ -59,6 +59,7 @@ koverReport {
                 packages("controller")
                 packages("entity")
                 packages("repository")
+                packages("service")
             }
         }
     }
