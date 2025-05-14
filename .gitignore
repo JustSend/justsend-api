@@ -5,7 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-.idea
+.env
 
 ### STS ###
 .apt_generated

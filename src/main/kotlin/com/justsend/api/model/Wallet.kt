@@ -1,11 +1,23 @@
 package com.justsend.api.model
 
-class Wallet(private var balance: Int = 0) {
+class Wallet() {
 
-  fun addBalance(amount: Int) {
-    require(amount >= 0) { "Amount must be non-negative" }
-    balance += amount
+  private var balances = mutableMapOf<Currency, Amount>()
+
+  fun add(money: Money) {
+    require(money.amount >= 0.0) { "Amount cannot be negative" }
+    balances[money.currency] = balances.getOrDefault(money.currency, 0.0) + money.amount
   }
 
-  fun getBalance(): Int = balance
+  fun remove(money: Money) {
+    require(money.amount >= 0.0) { "Amount cannot be negative" }
+    val currentAmount = balances.getOrDefault(money.currency, 0.0)
+    require(currentAmount >= money.amount) {
+      "Insufficient balance: trying to remove ${money.amount} from $currentAmount ${money.currency}"
+    }
+    balances[money.currency] = currentAmount - money.amount
+  }
+
+  fun getBalanceFor(currency: Currency): Double = balances.getOrDefault(currency, 0.0)
+  fun getAllBalances(): Map<String, Double> = balances.toMap()
 }
