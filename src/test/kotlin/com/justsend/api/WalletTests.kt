@@ -86,4 +86,31 @@ class WalletTests {
     assert(wallet.getBalanceFor(ars) == 10.0)
     assert(wallet.getBalanceFor(usd) == 10.0)
   }
+
+  @Test
+  fun `getting all balances for available currencies should return correctly`() {
+    wallet.add(tenDollars)
+    wallet.add(tenPesos)
+    val balances = wallet.getAllBalances()
+    assert(balances.containsKey(usd))
+    assert(balances.containsKey(ars))
+    assert(balances[usd] == 10.0)
+    assert(balances[ars] == 10.0)
+  }
+
+  @Test
+  fun `getting all balances for no currencies should return empty map`() {
+    val balances = wallet.getAllBalances()
+    assert(balances.isEmpty())
+  }
+
+  @Test
+  fun `getting all balances for one currency should return map with one entry`() {
+    wallet.add(tenDollars)
+    val balances = wallet.getAllBalances()
+    assert(balances.size == 1)
+    assert(balances.containsKey(usd))
+    assert(!balances.containsKey(ars))
+    assert(balances[usd] == 10.0)
+  }
 }
