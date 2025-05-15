@@ -15,21 +15,21 @@ class WalletTests {
 
   @Test
   fun `new wallet should start with no balance - 01`() {
-    assert(wallet.getBalanceFor(usd) == 0.0)
-    assert(wallet.getBalanceFor(ars) == 0.0)
+    assert(wallet.getBalanceIn(usd) == 0.0)
+    assert(wallet.getBalanceIn(ars) == 0.0)
   }
 
   @Test
   fun `adding positive balance to the wallet the wallet balance should not be cero - 02`() {
-    wallet.add(tenDollars)
-    val balanceInDollars = wallet.getBalanceFor(usd)
+    val newWallet = wallet.add(tenDollars)
+    val balanceInDollars = newWallet.getBalanceIn(usd)
     assert(balanceInDollars != 0.0)
   }
 
   @Test
   fun `adding positive balance to wallet the wallet should have the new balance - 03`() {
-    wallet.add(tenDollars)
-    val balanceInDollars = wallet.getBalanceFor(usd)
+    val newWallet = wallet.add(tenDollars)
+    val balanceInDollars = newWallet.getBalanceIn(usd)
     assert(balanceInDollars == 10.0)
   }
 
@@ -44,9 +44,9 @@ class WalletTests {
   @Test
   fun `removing no money the wallet should be the same - 05`() {
     val noMoney = Money(usd, 0.0)
-    wallet.add(tenDollars)
-    wallet.remove(noMoney)
-    val balanceInDollars = wallet.getBalanceFor(usd)
+    val walletWithMoney = wallet.add(tenDollars)
+    val walletWithSameMoney = walletWithMoney.remove(noMoney)
+    val balanceInDollars = walletWithSameMoney.getBalanceIn(usd)
     assert(balanceInDollars == 10.0)
   }
 
@@ -60,30 +60,30 @@ class WalletTests {
 
   @Test
   fun `removing same balance as current balance should leave wallet with no balance - 07`() {
-    wallet.add(tenDollars)
-    wallet.remove(tenDollars)
-    assert(wallet.getBalanceFor(usd) == 0.0)
+    val walletWithMoney = wallet.add(tenDollars)
+    val walletWithNoMoney = walletWithMoney.remove(tenDollars)
+    assert(walletWithNoMoney.getBalanceIn(usd) == 0.0)
   }
 
   @Test
   fun `removing more balance than actual should throw error - 08`() {
-    wallet.add(tenDollars)
+    val walletWithMoney = wallet.add(tenDollars)
     assertThrows(IllegalArgumentException::class.java) {
-      wallet.remove(Money(usd, 20.00))
+      walletWithMoney.remove(Money(usd, 20.00))
     }
   }
 
   @Test
   fun `adding a currency and asking for another one should return correctly`() {
-    wallet.add(tenDollars)
-    assert(wallet.getBalanceFor(ars) == 0.0)
+    val walletWithMoney = wallet.add(tenDollars)
+    assert(walletWithMoney.getBalanceIn(ars) == 0.0)
   }
 
   @Test
   fun `adding two currencies and asking for both should return correctly`() {
-    wallet.add(tenDollars)
-    wallet.add(tenPesos)
-    assert(wallet.getBalanceFor(ars) == 10.0)
-    assert(wallet.getBalanceFor(usd) == 10.0)
+    val walletWithMoney = wallet.add(tenDollars)
+    val walletWithMoreMoney = walletWithMoney.add(tenPesos)
+    assert(walletWithMoreMoney.getBalanceIn(ars) == 10.0)
+    assert(walletWithMoreMoney.getBalanceIn(usd) == 10.0)
   }
 }
