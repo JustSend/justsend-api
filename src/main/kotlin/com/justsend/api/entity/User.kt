@@ -16,7 +16,7 @@ data class User(
   val id: UUID? = null,
 
   @Column(nullable = false, unique = true)
-  val name: String,
+  val email: String,
 
   @Column(nullable = false)
   val password: String,

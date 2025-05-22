@@ -13,7 +13,7 @@ services:
       - "${APP_PORT}:${APP_PORT}"
 
   db:
-    container_name: postgres-db
+    container_name: just-send-db
     image: postgres:15
     restart: always
     environment:
