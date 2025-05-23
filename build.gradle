@@ -65,6 +65,7 @@ koverReport {
                 packages("dto")
                 packages("entity")
                 packages("repository")
+                packages("security")
                 packages("service")
             }
         }
