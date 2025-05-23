@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.security.Key
 import java.util.Date
+import java.util.UUID
 
 @Component
 class JwtUtils(
@@ -15,13 +16,13 @@ class JwtUtils(
 
   private val key: Key = Keys.hmacShaKeyFor(jwtSecret.toByteArray())
 
-  fun generateJwtToken(userId: String): String {
+  fun generateJwtToken(userId: UUID): String {
     val now = Date()
     val weekInMiliSeconds = 604800000
     val expiryDate = Date(now.time + weekInMiliSeconds)
 
     return Jwts.builder()
-      .setSubject(userId)
+      .setSubject(userId.toString())
       .setIssuedAt(now)
       .setExpiration(expiryDate)
       .signWith(key, SignatureAlgorithm.HS256)

@@ -24,4 +24,6 @@ class User(
 
   @Column(name = "wallet_id", nullable = false, unique = true)
   val walletId: UUID
-)
+) {
+  constructor() : this(null, "", "", UUID.randomUUID())
+}
