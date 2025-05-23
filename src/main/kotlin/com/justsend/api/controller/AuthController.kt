@@ -22,7 +22,7 @@ class AuthController(
     val result = authService.register(dto)
 
     return result.fold(
-      onSuccess = { userId -> ResponseEntity.ok("User registered correctly") },
+      onSuccess = { successMessage -> ResponseEntity.ok(successMessage) },
       onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
     )
   }

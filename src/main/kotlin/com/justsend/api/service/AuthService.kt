@@ -35,8 +35,8 @@ class AuthService(
       walletId = newWallet.id!!
     )
 
-    val savedUser = userRepository.save(user)
-    return Result.success(savedUser.id.toString())
+    userRepository.save(user)
+    return Result.success("User registered successfully")
   }
 
   fun login(email: String, password: String): LoginResponse {
