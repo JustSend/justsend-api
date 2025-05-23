@@ -18,9 +18,13 @@ class AuthController(
 ) {
 
   @PostMapping("/register")
-  fun register(@RequestBody body: RegisterDto): ResponseEntity<String> {
-    authService.register(body)
-    return ResponseEntity.ok("User registered successfully")
+  fun registerUser(@RequestBody dto: RegisterDto): ResponseEntity<Any> {
+    val result = authService.register(dto)
+
+    return result.fold(
+      onSuccess = { userId -> ResponseEntity.ok("User registered correctly") },
+      onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
+    )
   }
 
   @PostMapping("/login")
