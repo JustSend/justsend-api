@@ -28,7 +28,7 @@ class User(
 
   @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
-  val wallet: WalletEntity
+  var wallet: WalletEntity
 ) {
   constructor() : this(null, "", "", WalletEntity())
 }

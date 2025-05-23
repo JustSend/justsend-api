@@ -1,4 +1,4 @@
-package com.justsend.api.model
+package com.justsend.api.dto
 
 typealias Currency = String
 typealias Amount = Double
