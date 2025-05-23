@@ -11,24 +11,29 @@ import org.springframework.stereotype.Service
 @Service
 class WalletService(
   private val userRepository: UserRepository,
-  securityService: SecurityService
+  private val securityService: SecurityService
 ) {
-  private val userId = securityService.getUserId()
-
-  private val user = userRepository.findById(userId)
-    .orElseThrow { IllegalStateException("User not found") }
 
   fun getBalances(): Map<Currency, Amount> {
+    val user = securityService.getUser()
     return user.wallet.balances
   }
 
-  fun addBalance(money: Money) {
-    val updatedWallet = user.wallet.toDomain().add(money)
-    user.wallet = updatedWallet.toEntity()
-    userRepository.save(user)
+  fun addBalance(money: Money): Result<String> {
+    val user = securityService.getUser()
+
+    return try {
+      val updatedWallet = user.wallet.toDomain().add(money)
+      user.wallet = updatedWallet.toEntity()
+      userRepository.save(user)
+      Result.success("Added ${money.amount} ${money.currency} to wallet successfully")
+    } catch (ex: IllegalArgumentException) {
+      Result.failure(ex)
+    }
   }
 
   fun removeBalance(money: Money) {
+    val user = securityService.getUser()
     val updatedWallet = user.wallet.toDomain().remove(money)
     user.wallet = updatedWallet.toEntity()
     userRepository.save(user)

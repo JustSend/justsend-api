@@ -5,18 +5,13 @@ import com.justsend.api.repository.UserRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import java.util.UUID
 
 @Service
 class SecurityService(
   private val userRepository: UserRepository
 ) {
-  fun getUserId(): UUID {
-    val user = getUser()
-    return user.id ?: throw IllegalArgumentException("User is not authenticated")
-  }
 
-  private fun getUser(): User {
+  fun getUser(): User {
     val authentication = SecurityContextHolder.getContext().authentication
 
     if (authentication == null || !authentication.isAuthenticated) {

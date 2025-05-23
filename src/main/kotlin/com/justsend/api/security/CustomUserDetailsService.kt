@@ -15,6 +15,6 @@ class CustomUserDetailsService(
     val uuid = UUID.fromString(userId)
     val user = userRepository.findById(uuid)
       .orElseThrow { UsernameNotFoundException("User not found with id: $userId") }
-    return UserPrincipal(user.id!!, user.email)
+    return UserPrincipal(user.id!!)
   }
 }

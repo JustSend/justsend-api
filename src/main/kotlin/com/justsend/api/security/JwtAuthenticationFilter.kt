@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
@@ -14,29 +15,36 @@ class JwtAuthenticationFilter(
   private val userDetailsService: CustomUserDetailsService
 ) : OncePerRequestFilter() {
 
-  override fun doFilterInternal(
+  public override fun doFilterInternal(
     request: HttpServletRequest,
     response: HttpServletResponse,
     filterChain: FilterChain
   ) {
-    val token = parseJwt(request)
-    if (token != null && jwtUtils.validateJwtToken(token)) {
-      val userId = jwtUtils.getUserIdFromJwtToken(token)
+    val authHeader: String? = request.getHeader("Authorization")
+
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response)
+      return
+    }
+
+    val jwt = authHeader.substringAfter("Bearer ")
+    val userId = jwtUtils.extractUserId(jwt)
+
+    if (SecurityContextHolder.getContext().authentication == null) {
       val userDetails = userDetailsService.loadUserByUsername(userId)
 
-      val auth = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
-      SecurityContextHolder.getContext().authentication = auth
+      if (jwtUtils.isTokenValid(jwt, userDetails)) {
+        val authToken =
+          UsernamePasswordAuthenticationToken(
+            userDetails,
+            jwt,
+            userDetails.authorities
+          )
+        authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+        SecurityContextHolder.getContext().authentication = authToken
+      }
     }
 
     filterChain.doFilter(request, response)
-  }
-
-  private fun parseJwt(request: HttpServletRequest): String? {
-    val headerAuth = request.getHeader("Authorization")
-    return if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
-      headerAuth.substring(7)
-    } else {
-      null
-    }
   }
 }

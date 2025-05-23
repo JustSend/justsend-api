@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import kotlin.fold
 
 @RestController("/wallet")
 class WalletController(
@@ -27,8 +28,12 @@ class WalletController(
 
   // Estos 2 llamarían a la API externa, por ahora hago mock de interaction
   @PostMapping("/add")
-  fun addMoney(@RequestBody body: Money) {
-    walletService.addBalance(body)
+  fun addMoney(@RequestBody body: Money): ResponseEntity<String> {
+    val result = walletService.addBalance(body)
+    return result.fold(
+      onSuccess = { successMessage -> ResponseEntity.ok(successMessage) },
+      onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
+    )
   }
 
   @PostMapping("/remove")
