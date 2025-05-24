@@ -1,7 +1,7 @@
 package com.justsend.api
 
-import com.justsend.api.model.Money
-import com.justsend.api.model.Wallet
+import com.justsend.api.domain.Wallet
+import com.justsend.api.dto.Money
 import org.junit.jupiter.api.Assertions.assertThrows
 import kotlin.test.Test
 

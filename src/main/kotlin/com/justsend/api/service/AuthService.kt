@@ -5,17 +5,15 @@ import com.justsend.api.dto.RegisterDto
 import com.justsend.api.entity.User
 import com.justsend.api.entity.WalletEntity
 import com.justsend.api.repository.UserRepository
-import com.justsend.api.repository.WalletRepository
-import com.justsend.api.security.JwtUtils
+import com.justsend.api.security.JwtService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
   private val userRepository: UserRepository,
-  private val walletRepository: WalletRepository,
   private val passwordEncoder: BCryptPasswordEncoder,
-  private val jwtUtils: JwtUtils
+  private val jwtService: JwtService
 ) {
 
   fun register(dto: RegisterDto): Result<String> {
@@ -23,16 +21,10 @@ class AuthService(
       return Result.failure(IllegalArgumentException("Email '${dto.email}' is already registered"))
     }
 
-    val emptyWallet = WalletEntity(
-      balances = emptyMap()
-    )
-
-    val newWallet = walletRepository.save(emptyWallet)
-
     val user = User(
       email = dto.email,
       password = passwordEncoder.encode(dto.password),
-      walletId = newWallet.id!!
+      wallet = WalletEntity()
     )
 
     userRepository.save(user)
@@ -47,7 +39,7 @@ class AuthService(
       throw IllegalArgumentException("Invalid credentials")
     }
 
-    val token = jwtUtils.generateJwtToken(user.id!!)
+    val token = jwtService.generateJwtToken(user.id!!)
 
     return LoginResponse(token = token)
   }

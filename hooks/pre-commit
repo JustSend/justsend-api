@@ -2,6 +2,8 @@
 
 staged_files=$(git diff --staged --name-only)
 
+./gradlew ktlintFormat
+
 echo "🧹 Running Gradle build and checks on staged files…"
 ./gradlew build
 

@@ -1,8 +1,10 @@
-package com.justsend.api.model
+package com.justsend.api.domain
 
-class Wallet private constructor(
-  private val balances: Map<Currency, Amount>
-) {
+import com.justsend.api.dto.Amount
+import com.justsend.api.dto.Currency
+import com.justsend.api.dto.Money
+
+class Wallet(private val balances: Map<Currency, Amount>) {
 
   constructor() : this(emptyMap())
 

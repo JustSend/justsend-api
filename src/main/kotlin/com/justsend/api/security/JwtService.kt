@@ -3,13 +3,14 @@ package com.justsend.api.security
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.stereotype.Service
 import java.security.Key
 import java.util.Date
 import java.util.UUID
 
-@Component
-class JwtUtils(
+@Service
+class JwtService(
   @Value("\${jwt.secret}")
   private val jwtSecret: String
 ) {
@@ -29,13 +30,12 @@ class JwtUtils(
       .compact()
   }
 
-  fun getUserIdFromJwtToken(token: String): String {
+  fun extractUserId(token: String): String {
     val claims = Jwts.parserBuilder()
       .setSigningKey(key)
       .build()
       .parseClaimsJws(token)
       .body
-
     return claims.subject
   }
 
@@ -55,5 +55,10 @@ class JwtUtils(
       println("JWT claims string is empty: ${e.message}")
     }
     return false
+  }
+
+  fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
+    val userId = extractUserId(token)
+    return (userId == userDetails.username) && validateJwtToken(token)
   }
 }
