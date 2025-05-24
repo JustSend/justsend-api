@@ -3,15 +3,15 @@ package com.justsend.api.service
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
-import com.justsend.api.mappers.toDomain
-import com.justsend.api.mappers.toEntity
+import com.justsend.api.mappers.WalletMapper
 import com.justsend.api.repository.UserRepository
 import org.springframework.stereotype.Service
 
 @Service
 class WalletService(
   private val userRepository: UserRepository,
-  private val securityService: SecurityService
+  private val securityService: SecurityService,
+  private val walletMapper: WalletMapper
 ) {
 
   fun getBalances(): Map<Currency, Amount> {
@@ -23,8 +23,8 @@ class WalletService(
     val user = securityService.getUser()
 
     return try {
-      val updatedWallet = user.wallet.toDomain().add(money)
-      user.wallet = updatedWallet.toEntity()
+      val updatedWallet = walletMapper.toDomain(user.wallet).add(money)
+      user.wallet = walletMapper.toEntity(updatedWallet)
       userRepository.save(user)
       Result.success("Added ${money.amount} ${money.currency} to wallet successfully")
     } catch (ex: IllegalArgumentException) {
@@ -34,8 +34,8 @@ class WalletService(
 
   fun removeBalance(money: Money) {
     val user = securityService.getUser()
-    val updatedWallet = user.wallet.toDomain().remove(money)
-    user.wallet = updatedWallet.toEntity()
+    val updatedWallet = walletMapper.toDomain(user.wallet).remove(money)
+    user.wallet = walletMapper.toEntity(updatedWallet)
     userRepository.save(user)
   }
 }

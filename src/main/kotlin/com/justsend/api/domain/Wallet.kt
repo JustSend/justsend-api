@@ -1,4 +1,4 @@
-package com.justsend.api.model
+package com.justsend.api.domain
 
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
