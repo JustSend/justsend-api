@@ -28,7 +28,7 @@ class WalletEntity(
   )
   @MapKeyColumn(name = "currency")
   @Column(name = "amount")
-  val balances: Map<String, Double>
+  var balances: MutableMap<String, Double>
 ) {
-  constructor() : this(null, emptyMap())
+  constructor() : this(null, mutableMapOf())
 }

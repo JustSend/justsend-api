@@ -5,11 +5,13 @@ import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
 import com.justsend.api.mappers.WalletMapper
 import com.justsend.api.repository.UserRepository
+import com.justsend.api.repository.WalletRepository
 import org.springframework.stereotype.Service
 
 @Service
 class WalletService(
   private val userRepository: UserRepository,
+  private val walletRepository: WalletRepository,
   private val securityService: SecurityService,
   private val walletMapper: WalletMapper
 ) {
