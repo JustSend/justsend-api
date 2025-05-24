@@ -4,13 +4,13 @@ import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.security.Key
 import java.util.Date
 import java.util.UUID
 
-@Component
-class JwtUtils(
+@Service
+class JwtService(
   @Value("\${jwt.secret}")
   private val jwtSecret: String
 ) {

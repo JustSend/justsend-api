@@ -11,7 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class JwtAuthenticationFilter(
-  private val jwtUtils: JwtUtils,
+  private val jwtService: JwtService,
   private val userDetailsService: CustomUserDetailsService
 ) : OncePerRequestFilter() {
 
@@ -22,26 +22,19 @@ class JwtAuthenticationFilter(
   ) {
     try {
       val authHeader: String? = request.getHeader("Authorization")
-      println("Authorization header: $authHeader")
 
-      if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-        println("No JWT token found or bad format")
+      if (authHeader.isNullOrBlank() || !authHeader.startsWith("Bearer ")) {
         filterChain.doFilter(request, response)
         return
       }
 
-      val jwt = authHeader.substringAfter("Bearer ")
-      println("JWT token extracted: $jwt")
-
-      val userId = jwtUtils.extractUserId(jwt)
-      println("User ID extracted from JWT: $userId")
+      val jwt = authHeader.substringAfter("Bearer ").trim()
+      val userId = jwtService.extractUserId(jwt)
 
       if (SecurityContextHolder.getContext().authentication == null) {
         val userDetails = userDetailsService.loadUserByUsername(userId)
-        println("UserDetails loaded: $userDetails")
 
-        if (jwtUtils.isTokenValid(jwt, userDetails)) {
-          println("JWT token is valid")
+        if (jwtService.isTokenValid(jwt, userDetails)) {
           val authToken = UsernamePasswordAuthenticationToken(
             userDetails,
             jwt,
@@ -49,18 +42,12 @@ class JwtAuthenticationFilter(
           )
           authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
           SecurityContextHolder.getContext().authentication = authToken
-        } else {
-          println("JWT token is invalid")
         }
-      } else {
-        println("Authentication already set in context")
       }
     } catch (ex: Exception) {
-      println("JWT authentication failed: ${ex.message}")
-      SecurityContextHolder.clearContext()
+      ex.printStackTrace()
     }
 
-    println("Authentication before filterChain.doFilter: ${SecurityContextHolder.getContext().authentication}")
     filterChain.doFilter(request, response)
   }
 }

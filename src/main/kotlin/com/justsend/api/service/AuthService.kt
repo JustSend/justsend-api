@@ -5,7 +5,7 @@ import com.justsend.api.dto.RegisterDto
 import com.justsend.api.entity.User
 import com.justsend.api.entity.WalletEntity
 import com.justsend.api.repository.UserRepository
-import com.justsend.api.security.JwtUtils
+import com.justsend.api.security.JwtService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
 class AuthService(
   private val userRepository: UserRepository,
   private val passwordEncoder: BCryptPasswordEncoder,
-  private val jwtUtils: JwtUtils
+  private val jwtService: JwtService
 ) {
 
   fun register(dto: RegisterDto): Result<String> {
@@ -39,7 +39,7 @@ class AuthService(
       throw IllegalArgumentException("Invalid credentials")
     }
 
-    val token = jwtUtils.generateJwtToken(user.id!!)
+    val token = jwtService.generateJwtToken(user.id!!)
 
     return LoginResponse(token = token)
   }

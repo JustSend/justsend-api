@@ -5,6 +5,7 @@ import com.justsend.api.repository.UserRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import java.util.UUID
 
 @Service
 class SecurityService(
@@ -18,8 +19,8 @@ class SecurityService(
       throw IllegalArgumentException("User is not authenticated")
     }
 
-    val email = authentication.name
-    return userRepository.findByEmail(email)
-      ?: throw UsernameNotFoundException("User not found: $email")
+    val userId = UUID.fromString(authentication.name)
+    return userRepository.findById(userId)
+      .orElseThrow { UsernameNotFoundException("User not found: $userId") }
   }
 }
