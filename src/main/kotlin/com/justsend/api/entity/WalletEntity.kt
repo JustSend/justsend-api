@@ -11,7 +11,6 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.MapKeyColumn
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import org.hibernate.annotations.UuidGenerator
 import java.util.UUID
 
 @Entity
@@ -19,9 +18,8 @@ import java.util.UUID
 class WalletEntity(
 
   @Id
-  @UuidGenerator
-  @Column
-  val id: UUID? = null,
+  @Column(name = "id")
+  val id: String,
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
@@ -35,5 +33,5 @@ class WalletEntity(
   @OneToMany(mappedBy = "wallet", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
   val transactions: MutableList<TransactionEntity> = mutableListOf()
 ) {
-  constructor() : this(null, mutableMapOf())
+  constructor() : this(UUID.randomUUID().toString(), mutableMapOf())
 }
