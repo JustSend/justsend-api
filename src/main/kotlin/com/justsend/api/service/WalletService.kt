@@ -11,17 +11,17 @@ import org.springframework.stereotype.Service
 class WalletService(
   private val userService: UserService,
   private val transactionService: TransactionService,
-  private val securityService: SecurityService,
+  private val securityService: AuthService,
   private val walletMapper: WalletMapper
 ) {
 
   fun getBalances(): Map<Currency, Amount> {
-    val user = securityService.getUser()
+    val user = securityService.getAuthenticatedUser()
     return user.wallet.balances
   }
 
   fun addBalance(money: Money): Result<String> {
-    val user = securityService.getUser()
+    val user = securityService.getAuthenticatedUser()
 
     return try {
       val updatedWallet = walletMapper.toDomain(user.wallet).add(money)
@@ -34,7 +34,7 @@ class WalletService(
   }
 
   fun removeBalance(money: Money) {
-    val user = securityService.getUser()
+    val user = securityService.getAuthenticatedUser()
     val updatedWallet = walletMapper.toDomain(user.wallet).remove(money)
     userService.updateWallet(user, walletMapper.toEntity(updatedWallet))
     transactionService.createTransaction(user.wallet, money, TransactionType.EXTRACTION)
