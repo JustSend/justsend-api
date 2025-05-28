@@ -8,14 +8,12 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import org.hibernate.annotations.UuidGenerator
 
 @Entity
 @Table(name = "users")
 class User(
 
   @Id
-  @UuidGenerator
   @Column
   val id: String,
 
