@@ -1,6 +1,5 @@
 package com.justsend.api.service
 
-import com.justsend.api.dto.LoginResponse
 import com.justsend.api.dto.RegisterDto
 import com.justsend.api.entity.User
 import com.justsend.api.entity.WalletEntity
@@ -31,7 +30,7 @@ class AuthService(
     return Result.success("User registered successfully")
   }
 
-  fun login(email: String, password: String): LoginResponse {
+  fun login(email: String, password: String): User {
     val user = userRepository.findByEmail(email)
       ?: throw IllegalArgumentException("Invalid credentials")
 
@@ -39,8 +38,6 @@ class AuthService(
       throw IllegalArgumentException("Invalid credentials")
     }
 
-    val token = jwtService.generateJwtToken(user.id!!)
-
-    return LoginResponse(token = token)
+    return user
   }
 }
