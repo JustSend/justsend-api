@@ -2,6 +2,7 @@ package com.justsend.api.controller
 
 import com.justsend.api.service.AuthService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,4 +22,7 @@ class UserController(
       onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
     )
   }
+
+  @GetMapping
+  fun test() = "test"
 }

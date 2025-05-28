@@ -7,6 +7,8 @@ build/
 
 .env
 
+/src/main/resources/firebase-service-account.json
+
 ### STS ###
 .apt_generated
 .classpath
