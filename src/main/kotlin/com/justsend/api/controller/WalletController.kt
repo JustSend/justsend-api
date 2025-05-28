@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import kotlin.fold
 
 @RestController()
-@RequestMapping("/wallet")
+@RequestMapping("/api/wallet")
 class WalletController(
   val walletService: WalletService
 ) {

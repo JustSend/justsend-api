@@ -20,6 +20,10 @@ class WalletTests {
   }
 
   @Test
+  fun `new wallet should have no transactions`() {
+  }
+
+  @Test
   fun `adding positive balance to the wallet the wallet balance should not be cero - 02`() {
     val newWallet = wallet.add(tenDollars)
     val balanceInDollars = newWallet.getBalanceIn(usd)
