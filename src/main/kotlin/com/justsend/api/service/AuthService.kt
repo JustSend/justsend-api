@@ -1,36 +1,34 @@
 package com.justsend.api.service
 
-import com.justsend.api.entity.User
-import com.justsend.api.entity.WalletEntity
-import com.justsend.api.repository.UserRepository
+import com.justsend.api.entity.Wallet
+import com.justsend.api.repository.WalletRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
-  private val userRepository: UserRepository
+  private val walletRepository: WalletRepository
 ) {
 
   fun register(uid: String): Result<String> {
-    if (userRepository.existsById(uid)) {
+    if (walletRepository.existsById(uid)) {
       return Result.failure(IllegalArgumentException("User '$uid' is already registered"))
     }
 
-    val user = User(
-      id = uid,
-      wallet = WalletEntity()
+    val wallet = Wallet(
+      id = uid
     )
 
-    userRepository.save(user)
-    return Result.success("User registered successfully")
+    walletRepository.save(wallet)
+    return Result.success("Wallet created successfully")
   }
 
-  fun getAuthenticatedUser(): User {
+  fun getUserWallet(): Wallet {
     val authentication = SecurityContextHolder.getContext().authentication
     val uid = authentication?.principal as? String
       ?: throw IllegalStateException("Firebase UID not found in security context")
 
-    return userRepository.findById(uid)
+    return walletRepository.findById(uid)
       .orElseThrow { IllegalStateException("User with UID $uid not found") }
   }
 }

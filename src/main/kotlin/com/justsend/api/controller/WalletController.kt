@@ -26,20 +26,22 @@ class WalletController(
   }
 
   @GetMapping("/{currency}")
-  fun getWalletBalanceInCurrency(@PathVariable currency: String) {}
+  fun getWalletBalanceInCurrency(@PathVariable currency: String): ResponseEntity<Amount> {
+    val balance = walletService.getBalanceIn(currency)
+    return ResponseEntity.ok(balance)
+  }
 
-  // Estos 2 llamarían a la API externa, por ahora hago mock de interaction
-  @PostMapping("/add")
-  fun addMoney(@RequestBody body: Money): ResponseEntity<String> {
-    val result = walletService.addBalance(body)
+  @PostMapping("/deposit")
+  fun deposit(@RequestBody body: Money): ResponseEntity<String> {
+    val result = walletService.deposit(body)
     return result.fold(
       onSuccess = { successMessage -> ResponseEntity.ok(successMessage) },
       onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
     )
   }
 
-  @PostMapping("/remove")
-  fun removeMoney(@RequestBody body: Money) {
-    walletService.removeBalance(body)
+  @PostMapping("/withdraw")
+  fun withdraw(@RequestBody body: Money) {
+    walletService.withdraw(body)
   }
 }

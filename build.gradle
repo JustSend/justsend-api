@@ -73,7 +73,6 @@ koverReport {
                 packages("controller")
                 packages("mappers")
                 packages("dto")
-                packages("entity")
                 packages("repository")
                 packages("security")
                 packages("service")
