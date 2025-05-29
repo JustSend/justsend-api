@@ -23,7 +23,7 @@ class TransactionEntity(
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "wallet_id", nullable = false)
-  val wallet: WalletEntity,
+  val wallet: Wallet,
 
   @Column(nullable = false)
   val amount: Amount,
@@ -39,7 +39,7 @@ class TransactionEntity(
 ) {
   constructor() : this(
     UUID.randomUUID(),
-    WalletEntity(),
+    Wallet(),
     0.0,
     "ARS",
     TransactionType.INIT

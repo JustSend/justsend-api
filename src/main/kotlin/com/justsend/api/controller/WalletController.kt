@@ -26,10 +26,13 @@ class WalletController(
   }
 
   @GetMapping("/{currency}")
-  fun getWalletBalanceInCurrency(@PathVariable currency: String) {}
+  fun getWalletBalanceInCurrency(@PathVariable currency: String): ResponseEntity<Amount> {
+    val balance = walletService.getBalanceIn(currency)
+    return ResponseEntity.ok(balance)
+  }
 
   @PostMapping("/deposit")
-  fun addMoney(@RequestBody body: Money): ResponseEntity<String> {
+  fun deposit(@RequestBody body: Money): ResponseEntity<String> {
     val result = walletService.deposit(body)
     return result.fold(
       onSuccess = { successMessage -> ResponseEntity.ok(successMessage) },
@@ -38,7 +41,7 @@ class WalletController(
   }
 
   @PostMapping("/withdraw")
-  fun removeMoney(@RequestBody body: Money) {
+  fun withdraw(@RequestBody body: Money) {
     walletService.withdraw(body)
   }
 }

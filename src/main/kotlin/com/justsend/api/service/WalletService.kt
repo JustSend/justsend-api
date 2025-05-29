@@ -3,44 +3,56 @@ package com.justsend.api.service
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
-import com.justsend.api.dto.TransactionType
-import com.justsend.api.mappers.WalletMapper
+import com.justsend.api.repository.WalletRepository
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
 class WalletService(
-  private val userService: UserService,
-  private val transactionService: TransactionService,
   private val authService: AuthService,
-  private val walletMapper: WalletMapper
+  private val walletRepository: WalletRepository
 ) {
 
   fun getBalances(): Map<Currency, Amount> {
-    val user = authService.getAuthenticatedUser()
-    return user.wallet.balances
+    val wallet = authService.getUserWallet()
+    return wallet.getAllBalances()
   }
 
-  fun deposit(money: Money): Result<String> {
-    val user = authService.getAuthenticatedUser()
+  fun getBalanceIn(currency: Currency): Amount? {
+    val wallet = authService.getUserWallet()
+    return wallet.getBalanceIn(currency)
+  }
 
+  @Transactional
+  fun deposit(money: Money): Result<String> {
     return try {
-      val wallet = walletMapper.toDomain(user.wallet)
+      val wallet = authService.getUserWallet()
+
       val updatedWallet = wallet.add(money)
 
-      walletMapper.updateEntityFromDomain(updatedWallet, user.wallet)
-
-      transactionService.createTransaction(user.wallet, money, TransactionType.DEPOSIT)
+      walletRepository.save(updatedWallet)
 
       Result.success("Added ${money.amount} ${money.currency} to wallet successfully")
     } catch (ex: IllegalArgumentException) {
       Result.failure(ex)
+    } catch (ex: Exception) {
+      Result.failure(RuntimeException("Failed to process deposit: ${ex.message}", ex))
     }
   }
 
-  fun withdraw(money: Money) {
-    val user = authService.getAuthenticatedUser()
-    val updatedWallet = walletMapper.toDomain(user.wallet).remove(money)
-    userService.updateWallet(user, walletMapper.toEntity(updatedWallet))
-    transactionService.createTransaction(user.wallet, money, TransactionType.EXTRACTION)
+  fun withdraw(money: Money): Result<String> {
+    return try {
+      val wallet = authService.getUserWallet()
+
+      val updatedWallet = wallet.remove(money)
+
+      walletRepository.save(updatedWallet)
+
+      Result.success("Added ${money.amount} ${money.currency} to wallet successfully")
+    } catch (ex: IllegalArgumentException) {
+      Result.failure(ex)
+    } catch (ex: Exception) {
+      Result.failure(RuntimeException("Failed to process deposit: ${ex.message}", ex))
+    }
   }
 }
