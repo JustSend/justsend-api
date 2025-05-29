@@ -11,30 +11,34 @@ import org.springframework.stereotype.Service
 class WalletService(
   private val userService: UserService,
   private val transactionService: TransactionService,
-  private val securityService: AuthService,
+  private val authService: AuthService,
   private val walletMapper: WalletMapper
 ) {
 
   fun getBalances(): Map<Currency, Amount> {
-    val user = securityService.getAuthenticatedUser()
+    val user = authService.getAuthenticatedUser()
     return user.wallet.balances
   }
 
-  fun addBalance(money: Money): Result<String> {
-    val user = securityService.getAuthenticatedUser()
+  fun deposit(money: Money): Result<String> {
+    val user = authService.getAuthenticatedUser()
 
     return try {
-      val updatedWallet = walletMapper.toDomain(user.wallet).add(money)
-      userService.updateWallet(user, walletMapper.toEntity(updatedWallet))
+      val wallet = walletMapper.toDomain(user.wallet)
+      val updatedWallet = wallet.add(money)
+
+      walletMapper.updateEntityFromDomain(updatedWallet, user.wallet)
+
       transactionService.createTransaction(user.wallet, money, TransactionType.DEPOSIT)
+
       Result.success("Added ${money.amount} ${money.currency} to wallet successfully")
     } catch (ex: IllegalArgumentException) {
       Result.failure(ex)
     }
   }
 
-  fun removeBalance(money: Money) {
-    val user = securityService.getAuthenticatedUser()
+  fun withdraw(money: Money) {
+    val user = authService.getAuthenticatedUser()
     val updatedWallet = walletMapper.toDomain(user.wallet).remove(money)
     userService.updateWallet(user, walletMapper.toEntity(updatedWallet))
     transactionService.createTransaction(user.wallet, money, TransactionType.EXTRACTION)
