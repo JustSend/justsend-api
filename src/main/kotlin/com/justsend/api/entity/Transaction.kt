@@ -2,6 +2,7 @@ package com.justsend.api.entity
 
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
+import com.justsend.api.dto.TransactionDto
 import com.justsend.api.dto.TransactionType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -49,4 +50,15 @@ class Transaction(
     "ARS",
     TransactionType.INIT
   )
+
+  fun toDto(): TransactionDto {
+    return TransactionDto(
+      id = this.id!!,
+      walletId = this.wallet.id,
+      amount = this.amount,
+      currency = this.currency,
+      type = this.type,
+      createdAt = this.timestamp
+    )
+  }
 }

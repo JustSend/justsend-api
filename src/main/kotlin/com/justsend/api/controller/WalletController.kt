@@ -3,6 +3,7 @@ package com.justsend.api.controller
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
+import com.justsend.api.dto.TransactionDto
 import com.justsend.api.service.WalletService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -45,4 +46,8 @@ class WalletController(
   fun withdraw(@RequestBody body: Money) {
     walletService.withdraw(body)
   }
+
+  @GetMapping("/transactions")
+  fun getWalletTransactions(): ResponseEntity<List<TransactionDto>> =
+    ResponseEntity.ok(walletService.getTransactions())
 }
