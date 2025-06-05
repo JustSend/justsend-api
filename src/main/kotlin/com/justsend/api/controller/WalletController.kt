@@ -4,6 +4,7 @@ import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
 import com.justsend.api.service.WalletService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,7 +17,7 @@ import kotlin.fold
 @RestController()
 @RequestMapping("/api/wallet")
 class WalletController(
-  val walletService: WalletService
+  @Autowired private val walletService: WalletService
 ) {
 
   @GetMapping

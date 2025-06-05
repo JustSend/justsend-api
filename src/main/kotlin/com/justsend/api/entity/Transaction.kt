@@ -5,8 +5,11 @@ import com.justsend.api.dto.Currency
 import com.justsend.api.dto.TransactionType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
@@ -18,7 +21,8 @@ import java.util.UUID
 @Table(name = "transactions")
 class Transaction(
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  @Column(updatable = false, nullable = false)
   val id: UUID? = null,
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -31,6 +35,7 @@ class Transaction(
   @Column(nullable = false)
   val currency: Currency,
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   val type: TransactionType,
 

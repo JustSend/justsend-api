@@ -44,6 +44,7 @@ class WalletService(
     }
   }
 
+  @Transactional
   fun withdraw(money: Money): Result<String> {
     return try {
       val wallet = authService.getUserWallet()
