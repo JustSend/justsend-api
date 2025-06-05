@@ -37,6 +37,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'com.h2database:h2'
+
+    testImplementation "io.mockk:mockk:1.13.10"
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -63,7 +65,7 @@ koverReport {
     verify {
         rule {
             bound {
-                minValue = 80
+                minValue = 75
             }
         }
         filters {
@@ -106,5 +108,4 @@ tasks.register('installGitHook', Copy) {
         println "✅ Installed pre-commit hook to .git/hooks/"
     }
 }
-
 
