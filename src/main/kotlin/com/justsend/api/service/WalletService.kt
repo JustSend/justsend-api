@@ -3,6 +3,7 @@ package com.justsend.api.service
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
+import com.justsend.api.dto.TransactionType
 import com.justsend.api.repository.WalletRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class WalletService(
   private val authService: AuthService,
+  private val transactionService: TransactionService,
   private val walletRepository: WalletRepository
 ) {
 
@@ -30,6 +32,8 @@ class WalletService(
 
       val updatedWallet = wallet.add(money)
 
+      transactionService.createTransaction(wallet, money, TransactionType.DEPOSIT)
+
       walletRepository.save(updatedWallet)
 
       Result.success("Added ${money.amount} ${money.currency} to wallet successfully")
@@ -40,11 +44,14 @@ class WalletService(
     }
   }
 
+  @Transactional
   fun withdraw(money: Money): Result<String> {
     return try {
       val wallet = authService.getUserWallet()
 
       val updatedWallet = wallet.remove(money)
+
+      transactionService.createTransaction(wallet, money, TransactionType.WITHDRAW)
 
       walletRepository.save(updatedWallet)
 
