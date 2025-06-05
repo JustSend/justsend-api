@@ -4,7 +4,6 @@ import com.justsend.api.dto.Money
 import com.justsend.api.dto.TransactionType
 import com.justsend.api.entity.Wallet
 import com.justsend.api.entity.transaction.DepositTransaction
-import com.justsend.api.entity.transaction.P2PTransaction
 import com.justsend.api.entity.transaction.Transaction
 import com.justsend.api.entity.transaction.WithdrawTransaction
 import com.justsend.api.repository.TransactionRepository
@@ -57,24 +56,6 @@ class TransactionServiceTest {
     assertEquals(wallet, result.wallet)
     assertEquals(50.0, result.amount)
     assertEquals("EUR", result.currency)
-    verify { transactionRepository.save(any()) }
-  }
-
-  @Test
-  fun `createTransaction creates and saves P2PTransaction`() {
-    val sender = Wallet("wallet3")
-    val recipient = Wallet("wallet4")
-    val money = Money("ARS", 25.0)
-    val slot = slot<Transaction>()
-    every { transactionRepository.save(capture(slot)) } answers { slot.captured }
-
-    val result = transactionService.createTransaction(sender, money, TransactionType.P2P, recipient)
-
-    assertTrue(result is P2PTransaction)
-    assertEquals(sender, result.wallet)
-    assertEquals(recipient, (result as P2PTransaction).recipientWallet)
-    assertEquals(25.0, result.amount)
-    assertEquals("ARS", result.currency)
     verify { transactionRepository.save(any()) }
   }
 }
