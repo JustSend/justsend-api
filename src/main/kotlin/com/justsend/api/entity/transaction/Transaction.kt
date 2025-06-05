@@ -27,24 +27,25 @@ import java.util.UUID
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "transaction_kind")
 abstract class Transaction(
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(updatable = false, nullable = false)
-  val id: UUID? = null,
+  open val id: UUID? = null,
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "wallet_id", nullable = false)
-  val wallet: Wallet,
+  open val wallet: Wallet,
 
   @Column(nullable = false)
-  val amount: Amount,
+  open val amount: Amount,
 
   @Column(nullable = false)
-  val currency: Currency,
+  open val currency: Currency,
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  val type: TransactionType,
+  open val type: TransactionType,
 
   @Column(nullable = false, insertable = false)
   val timestamp: Instant = Instant.now()
