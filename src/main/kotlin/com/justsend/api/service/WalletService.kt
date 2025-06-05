@@ -3,10 +3,12 @@ package com.justsend.api.service
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
+import com.justsend.api.dto.TransactionDto
 import com.justsend.api.dto.TransactionType
 import com.justsend.api.repository.WalletRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import kotlin.collections.map
 
 @Service
 class WalletService(
@@ -61,5 +63,10 @@ class WalletService(
     } catch (ex: Exception) {
       Result.failure(RuntimeException("Failed to process deposit: ${ex.message}", ex))
     }
+  }
+
+  fun getTransactions(): List<TransactionDto> {
+    val wallet = authService.getUserWallet()
+    return transactionService.getAllTransactions(wallet).map { it.toDto() }
   }
 }

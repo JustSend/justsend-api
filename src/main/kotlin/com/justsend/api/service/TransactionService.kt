@@ -49,6 +49,7 @@ class TransactionService(
         DepositTransaction(wallet, money.amount, money.currency)
       TransactionType.WITHDRAW ->
         WithdrawTransaction(wallet, money.amount, money.currency)
+      else -> throw IllegalArgumentException("Unsupported transaction type")
     }
   }
 }
