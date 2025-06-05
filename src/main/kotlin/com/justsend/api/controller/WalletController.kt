@@ -48,6 +48,8 @@ class WalletController(
   }
 
   @GetMapping("/transactions")
-  fun getWalletTransactions(): ResponseEntity<List<TransactionDto>> =
-    ResponseEntity.ok(walletService.getTransactions())
+  fun getWalletTransactions(): ResponseEntity<List<TransactionDto>> {
+    val body = walletService.getTransactions()
+    return ResponseEntity.ok(body)
+  }
 }
