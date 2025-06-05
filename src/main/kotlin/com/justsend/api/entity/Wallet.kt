@@ -3,6 +3,7 @@ package com.justsend.api.entity
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
+import com.justsend.api.entity.transaction.Transaction
 import jakarta.persistence.CascadeType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column

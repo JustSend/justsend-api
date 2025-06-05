@@ -20,10 +20,6 @@ class WalletTests {
   }
 
   @Test
-  fun `new wallet should have no transactions`() {
-  }
-
-  @Test
   fun `adding positive balance to the wallet the wallet balance should not be cero - 02`() {
     val newWallet = wallet.add(tenDollars)
     val balanceInDollars = newWallet.getBalanceIn(usd)
@@ -78,13 +74,13 @@ class WalletTests {
   }
 
   @Test
-  fun `adding a currency and asking for another one should return correctly`() {
+  fun `adding a currency and asking for another one should return correctly - 09`() {
     val walletWithMoney = wallet.add(tenDollars)
     assert(walletWithMoney.getBalanceIn(ars) == 0.0)
   }
 
   @Test
-  fun `adding two currencies and asking for both should return correctly`() {
+  fun `adding two currencies and asking for both should return correctly - 10`() {
     val walletWithMoney = wallet.add(tenDollars)
     val walletWithMoreMoney = walletWithMoney.add(tenPesos)
     assert(walletWithMoreMoney.getBalanceIn(ars) == 10.0)
