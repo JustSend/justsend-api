@@ -67,6 +67,8 @@ class WalletService(
 
   fun getTransactions(): List<TransactionDto> {
     val wallet = authService.getUserWallet()
-    return transactionService.getAllTransactions(wallet).map { it.toDto() }
+    val transactions = wallet.transactions
+    val transactionDtos = transactions.map { it.toDto() }
+    return transactionDtos
   }
 }

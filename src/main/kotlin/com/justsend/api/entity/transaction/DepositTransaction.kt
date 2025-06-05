@@ -21,4 +21,11 @@ class DepositTransaction(
   currency = currency,
   type = TransactionType.DEPOSIT,
   timestamp = timestamp
-)
+) {
+  constructor() : this(
+    Wallet(),
+    0.0,
+    "ARS",
+    Instant.now()
+  )
+}

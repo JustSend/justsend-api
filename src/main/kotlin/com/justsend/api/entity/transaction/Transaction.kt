@@ -47,7 +47,7 @@ abstract class Transaction(
   @Column(nullable = false)
   open val type: TransactionType,
 
-  @Column(nullable = false, insertable = false)
+  @Column
   val timestamp: Instant = Instant.now()
 ) {
   constructor() : this(
