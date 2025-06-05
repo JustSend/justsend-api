@@ -34,7 +34,7 @@ class Wallet(
   var balances: MutableMap<String, Double> = mutableMapOf(),
 
   @OneToMany(mappedBy = "wallet", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
-  val transactions: MutableList<TransactionEntity> = mutableListOf()
+  val transactions: MutableList<Transaction> = mutableListOf()
 ) {
   constructor() : this(UUID.randomUUID().toString())
 

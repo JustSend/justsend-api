@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "transactions")
-class TransactionEntity(
+class Transaction(
   @Id
   @GeneratedValue
   val id: UUID? = null,
