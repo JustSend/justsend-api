@@ -2,6 +2,7 @@ package com.justsend.api.controller
 
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
+import com.justsend.api.dto.DepositRequest
 import com.justsend.api.dto.Money
 import com.justsend.api.dto.TransactionDto
 import com.justsend.api.service.WalletService
@@ -34,8 +35,13 @@ class WalletController(
   }
 
   @PostMapping("/deposit")
-  fun deposit(@RequestBody body: Money): ResponseEntity<String> {
-    val result = walletService.deposit(body)
+  fun deposit(@RequestBody body: DepositRequest): ResponseEntity<String> {
+    val validDeposit = walletService.validateToken(body.token)
+    if (!validDeposit) {
+      return ResponseEntity.badRequest().body("Invalid Deposit")
+    }
+    val money = Money(body.currency, body.amount)
+    val result = walletService.deposit(money)
     return result.fold(
       onSuccess = { successMessage -> ResponseEntity.ok(successMessage) },
       onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
