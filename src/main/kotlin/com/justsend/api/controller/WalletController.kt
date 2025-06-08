@@ -36,10 +36,6 @@ class WalletController(
 
   @PostMapping("/deposit")
   fun deposit(@RequestBody body: DepositRequest): ResponseEntity<String> {
-    val validDeposit = walletService.validateToken(body.token)
-    if (!validDeposit) {
-      return ResponseEntity.badRequest().body("Invalid Deposit")
-    }
     val money = Money(body.currency, body.amount)
     val result = walletService.deposit(money)
     return result.fold(
