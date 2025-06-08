@@ -71,4 +71,8 @@ class WalletService(
     val transactionDtos = transactions.map { it.toDto() }
     return transactionDtos
   }
+
+  fun validateToken(token: String): Boolean {
+    return true
+  }
 }
