@@ -5,6 +5,7 @@ import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
 import com.justsend.api.dto.TransactionDto
 import com.justsend.api.dto.TransactionType
+import com.justsend.api.entity.Wallet
 import com.justsend.api.repository.WalletRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -28,10 +29,8 @@ class WalletService(
   }
 
   @Transactional
-  fun deposit(money: Money): Result<String> {
+  fun deposit(money: Money, wallet: Wallet): Result<String> {
     return try {
-      val wallet = authService.getUserWallet()
-
       val updatedWallet = wallet.add(money)
 
       transactionService.createTransaction(wallet, money, TransactionType.DEPOSIT)
