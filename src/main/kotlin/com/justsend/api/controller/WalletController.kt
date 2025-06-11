@@ -8,7 +8,6 @@ import com.justsend.api.dto.Money
 import com.justsend.api.dto.P2PTransaction
 import com.justsend.api.dto.SendResponse
 import com.justsend.api.dto.TransactionDto
-import com.justsend.api.dto.UserInfo
 import com.justsend.api.external.ExternalApiClient
 import com.justsend.api.service.AuthService
 import com.justsend.api.service.WalletService
@@ -77,11 +76,5 @@ class WalletController(
       },
       onFailure = { error -> SendResponse(false, error.message ?: "Unknown error") }
     )
-  }
-
-  @GetMapping("/info")
-  fun getWalletInfo(): UserInfo {
-    val user = authService.getUserWallet()
-    return UserInfo(user.alias, user.email)
   }
 }

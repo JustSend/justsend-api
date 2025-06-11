@@ -33,4 +33,8 @@ class AuthService(
     return walletRepository.findById(uid)
       .orElseThrow { IllegalStateException("User with UID $uid not found") }
   }
+
+  fun getAllUsers(): List<Wallet> {
+    return walletRepository.findAll()
+  }
 }
