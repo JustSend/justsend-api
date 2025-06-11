@@ -28,6 +28,9 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.postgresql:postgresql:42.7.3'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.7.3"
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'com.google.firebase:firebase-admin:9.4.3'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
@@ -76,6 +79,7 @@ koverReport {
                 packages("controller")
                 packages("mappers")
                 packages("dto")
+                packages("external")
                 packages("repository")
                 packages("security")
                 packages("service")

@@ -5,6 +5,8 @@ import com.justsend.api.dto.Currency
 import com.justsend.api.dto.DepositRequest
 import com.justsend.api.dto.Money
 import com.justsend.api.dto.TransactionDto
+import com.justsend.api.external.ExternalApiClient
+import com.justsend.api.service.AuthService
 import com.justsend.api.service.WalletService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -19,7 +21,9 @@ import kotlin.fold
 @RestController()
 @RequestMapping("/api/wallet")
 class WalletController(
-  @Autowired private val walletService: WalletService
+  @Autowired private val walletService: WalletService,
+  @Autowired private val externalApiClient: ExternalApiClient,
+  @Autowired private val authService: AuthService
 ) {
 
   @GetMapping
@@ -35,14 +39,32 @@ class WalletController(
   }
 
   @PostMapping("/deposit")
-  fun deposit(@RequestBody body: DepositRequest): ResponseEntity<String> {
+  fun deposit(@RequestBody body: DepositRequest): DepositResponse {
+    val wallet = authService.getUserWallet()
+
+    val externalValidation = externalApiClient.validate(body)
+    if (!externalValidation.valid) {
+      return DepositResponse(false, externalValidation.status, externalValidation.message)
+    }
+
     val money = Money(body.currency, body.amount)
-    val result = walletService.deposit(money)
+    val result = walletService.deposit(money, wallet)
+
     return result.fold(
-      onSuccess = { successMessage -> ResponseEntity.ok(successMessage) },
-      onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
+      onSuccess = { successMessage ->
+        DepositResponse(true, "success", successMessage)
+      },
+      onFailure = { error ->
+        DepositResponse(false, "failure", error.message ?: "Unknown error")
+      }
     )
   }
+
+  data class DepositResponse(
+    val success: Boolean,
+    val status: String,
+    val message: String
+  )
 
   @PostMapping("/withdraw")
   fun withdraw(@RequestBody body: Money) {
