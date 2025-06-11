@@ -1,5 +1,6 @@
 package com.justsend.api.service
 
+import com.justsend.api.dto.User
 import com.justsend.api.entity.Wallet
 import com.justsend.api.repository.WalletRepository
 import org.springframework.security.core.context.SecurityContextHolder
@@ -10,13 +11,14 @@ class AuthService(
   private val walletRepository: WalletRepository
 ) {
 
-  fun register(uid: String): Result<String> {
-    if (walletRepository.existsById(uid)) {
-      return Result.failure(IllegalArgumentException("User '$uid' is already registered"))
+  fun register(user: User): Result<String> {
+    if (walletRepository.existsById(user.uid)) {
+      return Result.failure(IllegalArgumentException("User '${user.email}' is already registered"))
     }
 
     val wallet = Wallet(
-      id = uid
+      id = user.uid,
+      email = user.email
     )
 
     walletRepository.save(wallet)
