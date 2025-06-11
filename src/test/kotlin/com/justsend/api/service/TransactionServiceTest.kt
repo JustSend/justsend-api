@@ -24,7 +24,7 @@ class TransactionServiceTest {
   fun setUp() {
     transactionRepository = mockk(relaxed = true)
     authService = mockk(relaxed = true)
-    transactionService = TransactionService(transactionRepository, authService)
+    transactionService = TransactionService(transactionRepository)
   }
 
   @Test

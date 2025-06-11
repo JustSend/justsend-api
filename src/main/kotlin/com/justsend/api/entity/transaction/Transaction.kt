@@ -2,7 +2,6 @@ package com.justsend.api.entity.transaction
 
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
-import com.justsend.api.dto.TransactionDto
 import com.justsend.api.dto.TransactionType
 import com.justsend.api.entity.Wallet
 import jakarta.persistence.Column
@@ -24,7 +23,7 @@ import java.util.UUID
 
 @Entity
 @Table(name = "transactions")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorColumn(name = "transaction_kind")
 abstract class Transaction(
 
@@ -49,23 +48,4 @@ abstract class Transaction(
 
   @Column
   val timestamp: Instant = Instant.now()
-) {
-  constructor() : this(
-    UUID.randomUUID(),
-    Wallet(),
-    0.0,
-    "ARS",
-    TransactionType.EMPTY
-  )
-
-  fun toDto(): TransactionDto {
-    return TransactionDto(
-      id = this.id!!,
-      walletId = this.wallet.id,
-      amount = this.amount,
-      currency = this.currency,
-      type = this.type,
-      createdAt = this.timestamp
-    )
-  }
-}
+)

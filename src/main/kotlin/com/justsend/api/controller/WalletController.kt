@@ -5,6 +5,8 @@ import com.justsend.api.dto.Currency
 import com.justsend.api.dto.DepositRequest
 import com.justsend.api.dto.DepositResponse
 import com.justsend.api.dto.Money
+import com.justsend.api.dto.P2PTransaction
+import com.justsend.api.dto.SendResponse
 import com.justsend.api.dto.TransactionDto
 import com.justsend.api.external.ExternalApiClient
 import com.justsend.api.service.AuthService
@@ -70,5 +72,16 @@ class WalletController(
   fun getWalletTransactions(): ResponseEntity<List<TransactionDto>> {
     val body = walletService.getTransactions()
     return ResponseEntity.ok(body)
+  }
+
+  @PostMapping("/send")
+  fun sendTransaction(@RequestBody request: P2PTransaction): SendResponse {
+    val result = walletService.send(request.money, request.to)
+    return result.fold(
+      onSuccess = { successMessage ->
+        SendResponse(true, successMessage)
+      },
+      onFailure = { error -> SendResponse(false, error.message ?: "Unknown error") }
+    )
   }
 }

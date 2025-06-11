@@ -3,8 +3,10 @@ package com.justsend.api.service
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
+import com.justsend.api.dto.P2PUser
 import com.justsend.api.dto.TransactionDto
 import com.justsend.api.dto.TransactionType
+import com.justsend.api.dto.toDto
 import com.justsend.api.entity.Wallet
 import com.justsend.api.repository.WalletRepository
 import jakarta.transaction.Transactional
@@ -69,5 +71,27 @@ class WalletService(
     val transactions = wallet.transactions
     val transactionDtos = transactions.map { it.toDto() }
     return transactionDtos
+  }
+
+  @Transactional
+  fun send(money: Money, to: P2PUser): Result<String> {
+    return try {
+      val senderWallet = authService.getUserWallet()
+      val receiverWallet = walletRepository.findByEmailOrAlias(to.email, to.alias)
+        ?: return Result.failure(IllegalArgumentException("Receiver wallet not found."))
+      val updatedSenderWallet = senderWallet.remove(money)
+      val updatedReceiverWallet = receiverWallet.add(money)
+
+      transactionService.createTransaction(senderWallet, money, TransactionType.P2P, receiverWallet)
+
+      walletRepository.save(updatedSenderWallet)
+      walletRepository.save(updatedReceiverWallet)
+
+      Result.success("Sent ${money.amount} ${money.currency} successfully")
+    } catch (ex: IllegalArgumentException) {
+      Result.failure(ex)
+    } catch (ex: Exception) {
+      Result.failure(RuntimeException("Failed to process deposit: ${ex.message}", ex))
+    }
   }
 }
