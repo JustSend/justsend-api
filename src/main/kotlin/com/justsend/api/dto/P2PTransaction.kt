@@ -1,7 +1,7 @@
 package com.justsend.api.dto
 
 data class P2PTransaction(
-  val to: P2PUser,
+  val to: UserInfo,
   val money: Money
 )
 

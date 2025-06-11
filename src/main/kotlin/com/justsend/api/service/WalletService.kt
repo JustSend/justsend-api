@@ -3,9 +3,9 @@ package com.justsend.api.service
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
-import com.justsend.api.dto.P2PUser
 import com.justsend.api.dto.TransactionDto
 import com.justsend.api.dto.TransactionType
+import com.justsend.api.dto.UserInfo
 import com.justsend.api.dto.toDto
 import com.justsend.api.entity.Wallet
 import com.justsend.api.repository.WalletRepository
@@ -23,11 +23,6 @@ class WalletService(
   fun getBalances(): Map<Currency, Amount> {
     val wallet = authService.getUserWallet()
     return wallet.getAllBalances()
-  }
-
-  fun getBalanceIn(currency: Currency): Amount? {
-    val wallet = authService.getUserWallet()
-    return wallet.getBalanceIn(currency)
   }
 
   @Transactional
@@ -74,7 +69,7 @@ class WalletService(
   }
 
   @Transactional
-  fun send(money: Money, to: P2PUser): Result<String> {
+  fun send(money: Money, to: UserInfo): Result<String> {
     return try {
       val senderWallet = authService.getUserWallet()
       val receiverWallet = walletRepository.findByEmailOrAlias(to.email, to.alias)

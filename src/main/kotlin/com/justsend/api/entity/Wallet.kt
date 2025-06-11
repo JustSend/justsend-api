@@ -65,6 +65,5 @@ class Wallet(
     return Wallet(id, alias, email, newBalances, transactions)
   }
 
-  fun getBalanceIn(currency: Currency): Amount = balances.getOrDefault(currency, 0.0)
   fun getAllBalances(): Map<Currency, Amount> = balances.toMap()
 }
