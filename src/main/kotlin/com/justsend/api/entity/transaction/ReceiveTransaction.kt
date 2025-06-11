@@ -12,19 +12,19 @@ import jakarta.persistence.ManyToOne
 import java.time.Instant
 
 @Entity
-@DiscriminatorValue("P2P_")
-class P2PTransaction(
+@DiscriminatorValue("P2P_RECEIVE")
+class ReceiveTransaction(
   wallet: Wallet = Wallet(),
   amount: Amount = 0.0,
   currency: Currency = "",
   timestamp: Instant = Instant.now(),
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "wallet_to_id", nullable = false)
-  val recipientWallet: Wallet = Wallet()
+  @JoinColumn(name = "wallet_from_id", nullable = false)
+  val senderWallet: Wallet = Wallet()
 ) : Transaction(
   wallet = wallet,
   amount = amount,
   currency = currency,
-  type = TransactionType.P2P,
+  type = TransactionType.RECEIVE,
   timestamp = timestamp
 )
