@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController()
@@ -32,12 +33,17 @@ class UserController(
   }
 
   @GetMapping("/search")
-  fun getAllOtherUsers(): List<UserInfo> {
+  fun getAllOtherUsers(@RequestParam(required = false) query: String?): List<UserInfo> {
     val currentUser = authService.getUserWallet()
     val allUsers = authService.getAllUsers()
 
     return allUsers
       .filter { it.email != currentUser.email }
+      .filter {
+        query.isNullOrBlank() ||
+          it.alias.contains(query, ignoreCase = true) ||
+          it.email.contains(query, ignoreCase = true)
+      }
       .map { UserInfo(alias = it.alias, email = it.email) }
   }
 }
