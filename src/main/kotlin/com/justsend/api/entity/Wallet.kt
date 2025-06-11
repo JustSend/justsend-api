@@ -4,6 +4,7 @@ import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
 import com.justsend.api.dto.Money
 import com.justsend.api.entity.transaction.Transaction
+import com.justsend.api.util.generateAlias
 import jakarta.persistence.CascadeType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
@@ -15,7 +16,6 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.MapKeyColumn
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
-import java.util.UUID
 
 @Entity
 @Table(name = "wallets")
@@ -23,7 +23,13 @@ class Wallet(
 
   @Id
   @Column(name = "id")
-  val id: String,
+  val id: String = "",
+
+  @Column(name = "alias")
+  val alias: String = generateAlias(),
+
+  @Column(name = "email")
+  val email: String = "",
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
@@ -37,14 +43,13 @@ class Wallet(
   @OneToMany(mappedBy = "wallet", cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
   val transactions: MutableList<Transaction> = mutableListOf()
 ) {
-  constructor() : this(UUID.randomUUID().toString())
 
   fun add(money: Money): Wallet {
     require(money.amount >= 0.0) { "Amount cannot be negative" }
     val newBalances = balances.toMutableMap()
     val updatedAmount = newBalances.getOrDefault(money.currency, 0.0) + money.amount
     newBalances[money.currency] = updatedAmount
-    return Wallet(id, newBalances, transactions)
+    return Wallet(id, alias, email, newBalances, transactions)
   }
 
   fun remove(money: Money): Wallet {
@@ -57,7 +62,7 @@ class Wallet(
     val updatedAmount = currentAmount - money.amount
     newBalances[money.currency] = updatedAmount
 
-    return Wallet(id, newBalances, transactions)
+    return Wallet(id, alias, email, newBalances, transactions)
   }
 
   fun getBalanceIn(currency: Currency): Amount = balances.getOrDefault(currency, 0.0)

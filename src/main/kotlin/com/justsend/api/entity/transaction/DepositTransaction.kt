@@ -11,9 +11,9 @@ import java.time.Instant
 @Entity
 @DiscriminatorValue("DEPOSIT")
 class DepositTransaction(
-  wallet: Wallet,
-  amount: Amount,
-  currency: Currency,
+  wallet: Wallet = Wallet(),
+  amount: Amount = 0.0,
+  currency: Currency = "",
   timestamp: Instant = Instant.now()
 ) : Transaction(
   wallet = wallet,
@@ -21,11 +21,4 @@ class DepositTransaction(
   currency = currency,
   type = TransactionType.DEPOSIT,
   timestamp = timestamp
-) {
-  constructor() : this(
-    Wallet(),
-    0.0,
-    "ARS",
-    Instant.now()
-  )
-}
+)
