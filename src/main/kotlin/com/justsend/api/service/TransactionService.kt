@@ -47,10 +47,10 @@ class TransactionService(
       }
       TransactionType.RECEIVE -> {
         ReceiveTransaction(
-          wallet = otherWallet!!,
+          wallet = wallet,
           amount = money.amount,
           currency = money.currency,
-          senderWallet = wallet
+          senderWallet = otherWallet!!
         )
       }
     }
