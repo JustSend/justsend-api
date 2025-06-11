@@ -5,7 +5,7 @@ data class User(
   val email: String
 )
 
-data class P2PUser(
+data class UserInfo(
   val alias: String?,
   val email: String?
 )
