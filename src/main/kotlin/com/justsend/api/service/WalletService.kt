@@ -77,7 +77,18 @@ class WalletService(
       val updatedSenderWallet = senderWallet.remove(money)
       val updatedReceiverWallet = receiverWallet.add(money)
 
-      transactionService.createTransaction(senderWallet, money, TransactionType.P2P, receiverWallet)
+      transactionService.createTransaction(
+        senderWallet,
+        money.copy(amount = -kotlin.math.abs(money.amount)),
+        TransactionType.P2P,
+        receiverWallet
+      )
+      transactionService.createTransaction(
+        receiverWallet,
+        money.copy(amount = kotlin.math.abs(money.amount)),
+        TransactionType.P2P,
+        senderWallet
+      )
 
       walletRepository.save(updatedSenderWallet)
       walletRepository.save(updatedReceiverWallet)
