@@ -1,3 +1,5 @@
+version: '3.3'
+
 services:
   server:
     container_name: justsend-api
@@ -11,6 +13,10 @@ services:
       - db
     ports:
       - "${APP_PORT}:${APP_PORT}"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
 
   db:
     container_name: justsend-db
@@ -25,6 +31,11 @@ services:
     command: -p ${POSTGRES_PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '0.50'
 
 volumes:
   postgres_data:
