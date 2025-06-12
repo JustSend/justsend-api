@@ -57,8 +57,14 @@ class WalletController(
   }
 
   @PostMapping("/withdraw")
-  fun withdraw(@RequestBody body: Money) {
-    walletService.withdraw(body)
+  fun withdraw(@RequestBody body: Money): SendResponse {
+    val result = walletService.withdraw(body)
+    return result.fold(
+      onSuccess = { successMessage ->
+        SendResponse(true, successMessage)
+      },
+      onFailure = { error -> SendResponse(false, error.message ?: "Unknown error") }
+    )
   }
 
   @GetMapping("/transactions")
