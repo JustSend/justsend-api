@@ -18,7 +18,8 @@ data class TransactionDto(
 
 fun Transaction.toDto(): TransactionDto {
   val email = when (this) {
-    is ReceiveTransaction, is SendTransaction -> this.wallet.email
+    is ReceiveTransaction -> this.senderWallet.email
+    is SendTransaction -> this.recipientWallet.email
     else -> null
   }
 
