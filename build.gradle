@@ -69,7 +69,7 @@ koverReport {
     verify {
         rule {
             bound {
-                minValue = 65
+                minValue = 80
             }
         }
         filters {

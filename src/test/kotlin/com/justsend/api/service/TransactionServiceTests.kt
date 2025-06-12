@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class TransactionServiceTest {
+class TransactionServiceTests {
   private lateinit var transactionRepository: TransactionRepository
   private lateinit var authService: AuthService
   private lateinit var transactionService: TransactionService
