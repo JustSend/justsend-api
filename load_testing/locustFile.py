@@ -14,15 +14,34 @@ class WalletUser(HttpUser):
 
     @task(1)
     def get_balances(self):
-        self.client.get("/api/wallet/balances", headers=self.headers)
+        self.client.get("/api/wallet", headers=self.headers)
 
     @task(2)
     def deposit(self):
         payload = {
             "amount": 10.0,
-            "currency": "USD"
+            "currency": "USD",
+            "bank_routing": 111111111
         }
         self.client.post("/api/wallet/deposit", json=payload, headers=self.headers)
+
+    @task(1)
+    def send(self):
+        payload = {
+            "to": {
+                "email": "iii@iii.com"
+            },
+            "money":{
+                "currency": "USD",
+                "amount": 1.0
+            }
+
+        }
+        self.client.post("/api/wallet/send", json=payload, headers=self.headers)
+
+    @task(2)
+    def get_transactions(self):
+        self.client.get("/api/wallet/transactions", headers=self.headers)
 
     @task(1)
     def withdraw(self):

@@ -8,7 +8,7 @@ def get_firebase_token():
     url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={os.getenv('FIREBASE_API_KEY')}"
     payload = {
         "email": "token@test.com",
-        "password": "token123",
+        "password": "test123",
         "returnSecureToken": True
     }
     response = requests.post(url, json=payload)
