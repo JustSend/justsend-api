@@ -53,7 +53,7 @@ class WalletService(
 
       walletRepository.save(updatedWallet)
 
-      Result.success("Added ${money.amount} ${money.currency} to wallet successfully")
+      Result.success("Removed ${money.amount} ${money.currency} from wallet successfully")
     } catch (ex: IllegalArgumentException) {
       Result.failure(ex)
     } catch (ex: Exception) {
