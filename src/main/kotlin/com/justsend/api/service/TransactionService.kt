@@ -4,7 +4,8 @@ import com.justsend.api.dto.Money
 import com.justsend.api.dto.TransactionType
 import com.justsend.api.entity.Wallet
 import com.justsend.api.entity.transaction.DepositTransaction
-import com.justsend.api.entity.transaction.P2PTransaction
+import com.justsend.api.entity.transaction.ReceiveTransaction
+import com.justsend.api.entity.transaction.SendTransaction
 import com.justsend.api.entity.transaction.Transaction
 import com.justsend.api.entity.transaction.WithdrawTransaction
 import com.justsend.api.repository.TransactionRepository
@@ -18,9 +19,9 @@ class TransactionService(
     wallet: Wallet,
     money: Money,
     transactionType: TransactionType,
-    recipientWallet: Wallet? = null
+    otherWallet: Wallet? = null
   ): Transaction {
-    val transaction = buildTransaction(wallet, money, transactionType, recipientWallet)
+    val transaction = buildTransaction(wallet, money, transactionType, otherWallet)
     return transactionRepository.save(transaction)
   }
 
@@ -28,22 +29,30 @@ class TransactionService(
     wallet: Wallet,
     money: Money,
     transactionType: TransactionType,
-    recipientWallet: Wallet? = null
+    otherWallet: Wallet? = null
   ): Transaction {
     return when (transactionType) {
-      TransactionType.P2P -> {
-        requireNotNull(recipientWallet) { "Recipient wallet is required for P2P transactions" }
-        P2PTransaction(
-          wallet = wallet,
-          amount = money.amount,
-          currency = money.currency,
-          recipientWallet = recipientWallet
-        )
-      }
       TransactionType.DEPOSIT ->
         DepositTransaction(wallet, money.amount, money.currency)
       TransactionType.WITHDRAW ->
         WithdrawTransaction(wallet, money.amount, money.currency)
+
+      TransactionType.SEND -> {
+        SendTransaction(
+          wallet = wallet,
+          amount = money.amount,
+          currency = money.currency,
+          recipientWallet = otherWallet!!
+        )
+      }
+      TransactionType.RECEIVE -> {
+        ReceiveTransaction(
+          wallet = wallet,
+          amount = money.amount,
+          currency = money.currency,
+          senderWallet = otherWallet!!
+        )
+      }
     }
   }
 }

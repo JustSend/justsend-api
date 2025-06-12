@@ -20,7 +20,7 @@ class SecurityConfig {
       .csrf { it.disable() }
       .authorizeHttpRequests {
         it
-          .requestMatchers("/user/**").permitAll()
+          .requestMatchers("/api/user/register").permitAll()
           .anyRequest().authenticated()
       }
       .addFilterBefore(FirebaseAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)

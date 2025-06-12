@@ -68,7 +68,6 @@ class WalletService(
     return transactionDtos
   }
 
-  @Transactional
   fun send(money: Money, to: UserInfo): Result<String> {
     return try {
       val senderWallet = authService.getUserWallet()
@@ -77,7 +76,18 @@ class WalletService(
       val updatedSenderWallet = senderWallet.remove(money)
       val updatedReceiverWallet = receiverWallet.add(money)
 
-      transactionService.createTransaction(senderWallet, money, TransactionType.P2P, receiverWallet)
+      transactionService.createTransaction(
+        senderWallet,
+        money,
+        TransactionType.SEND,
+        receiverWallet
+      )
+      transactionService.createTransaction(
+        receiverWallet,
+        money,
+        TransactionType.RECEIVE,
+        senderWallet
+      )
 
       walletRepository.save(updatedSenderWallet)
       walletRepository.save(updatedReceiverWallet)

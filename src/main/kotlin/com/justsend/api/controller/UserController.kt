@@ -1,11 +1,14 @@
 package com.justsend.api.controller
 
 import com.justsend.api.dto.User
+import com.justsend.api.dto.UserInfo
 import com.justsend.api.service.AuthService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController()
@@ -14,12 +17,33 @@ class UserController(
   private val authService: AuthService
 ) {
 
-  @PostMapping
-  fun addUser(@RequestBody user: User): ResponseEntity<String> {
+  @PostMapping("/register")
+  fun register(@RequestBody user: User): ResponseEntity<String> {
     val result = authService.register(user)
     return result.fold(
       onSuccess = { successMessage -> ResponseEntity.ok(successMessage) },
       onFailure = { error -> ResponseEntity.badRequest().body(error.message ?: "Unknown error") }
     )
+  }
+
+  @GetMapping("/me")
+  fun getWalletInfo(): UserInfo {
+    val user = authService.getUserWallet()
+    return UserInfo(user.alias, user.email)
+  }
+
+  @GetMapping("/search")
+  fun getAllOtherUsers(@RequestParam(required = false) query: String?): List<UserInfo> {
+    val currentUser = authService.getUserWallet()
+    val allUsers = authService.getAllUsers()
+
+    return allUsers
+      .filter { it.email != currentUser.email }
+      .filter {
+        query.isNullOrBlank() ||
+          it.alias.contains(query, ignoreCase = true) ||
+          it.email.contains(query, ignoreCase = true)
+      }
+      .map { UserInfo(alias = it.alias, email = it.email) }
   }
 }
