@@ -44,18 +44,18 @@ class WalletUser(HttpUser):
         else:
             print(f"[deposit] Failed: {response.status_code} {response.text}")
 
-    # @task(1)
-    # def deposit_fail(self):
-    #     payload = {
-    #         "amount": 10.0,
-    #         "currency": "USD",
-    #         "bank_routing": 22222222
-    #     }
-    #     response = self.client.post("/api/wallet/deposit", json=payload, headers=self.headers)
-    #     if response.status_code != 200:
-    #         print(f"[deposit_fail] Expected failure: {response.status_code} {response.text}")
-    #     else:
-    #         print(f"[deposit_fail] Unexpected success: {response.json()}")
+    @task(1)
+    def deposit_fail(self):
+        payload = {
+            "amount": 10.0,
+            "currency": "USD",
+            "bank_routing": 22222222
+        }
+        response = self.client.post("/api/wallet/deposit", json=payload, headers=self.headers)
+        if response != 200:
+            print(f"[deposit_fail] Expected failure: {response.status_code} {response.text}")
+        else:
+            print(f"[deposit_fail] Unexpected success: {response.json()}")
 
     @task(3)
     def send(self):
