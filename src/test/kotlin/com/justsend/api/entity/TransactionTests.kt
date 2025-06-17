@@ -1,7 +1,6 @@
-package com.justsend.api
+package com.justsend.api.entity
 
 import com.justsend.api.dto.TransactionType
-import com.justsend.api.entity.Wallet
 import com.justsend.api.entity.transaction.DepositTransaction
 import com.justsend.api.entity.transaction.ReceiveTransaction
 import com.justsend.api.entity.transaction.SendTransaction

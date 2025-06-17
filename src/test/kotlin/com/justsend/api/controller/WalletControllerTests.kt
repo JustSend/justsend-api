@@ -67,7 +67,7 @@ class WalletControllerTests {
 
   @Test
   fun `deposit should fail when external validation fails`() {
-    val depositRequest = DepositRequest(50.0, "USD", "invalid-token")
+    val depositRequest = DepositRequest(50.0, "USD", "222222222")
     val wallet = Wallet(alias = "test", email = "test@example.com")
 
     every { authService.getUserWallet() } returns wallet

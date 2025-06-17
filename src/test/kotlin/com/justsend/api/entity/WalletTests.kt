@@ -1,8 +1,7 @@
-package com.justsend.api
+package com.justsend.api.entity
 
 import com.justsend.api.dto.Money
-import com.justsend.api.entity.Wallet
-import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions
 import kotlin.math.abs
 import kotlin.test.Test
 
@@ -38,7 +37,7 @@ class WalletTests {
   @Test
   fun `adding negative money to wallet should throw exception - 04`() {
     val negativeMoney = Money(usd, -10.00)
-    assertThrows(IllegalArgumentException::class.java) {
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
       wallet.add(negativeMoney)
     }
   }
@@ -55,7 +54,7 @@ class WalletTests {
   @Test
   fun `removing negative balance throw exception - 06`() {
     val negativeMoney = Money(usd, -10.00)
-    assertThrows(IllegalArgumentException::class.java) {
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
       wallet.remove(negativeMoney)
     }
   }
@@ -70,7 +69,7 @@ class WalletTests {
   @Test
   fun `removing more balance than actual should throw error - 08`() {
     val walletWithMoney = wallet.add(tenDollars)
-    assertThrows(IllegalArgumentException::class.java) {
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
       walletWithMoney.remove(Money(usd, 20.00))
     }
   }
@@ -92,7 +91,7 @@ class WalletTests {
 
   @Test
   fun `removing from empty wallet should throw exception - 11`() {
-    assertThrows(IllegalArgumentException::class.java) {
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
       wallet.remove(tenDollars)
     }
   }
@@ -130,7 +129,7 @@ class WalletTests {
   @Test
   fun `removing more than available in multi-currency wallet throws exception - 16`() {
     val walletWithBoth = wallet.add(tenDollars).add(tenPesos)
-    assertThrows(IllegalArgumentException::class.java) {
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
       walletWithBoth.remove(Money(usd, 20.0))
     }
   }
@@ -191,7 +190,7 @@ class WalletTests {
   @Test
   fun `removing from wallet with only other currency throws exception - 25`() {
     val walletWithPesos = wallet.add(tenPesos)
-    assertThrows(IllegalArgumentException::class.java) {
+    Assertions.assertThrows(IllegalArgumentException::class.java) {
       walletWithPesos.remove(tenDollars)
     }
   }
