@@ -3,6 +3,7 @@ package com.justsend.api
 import com.justsend.api.dto.Money
 import com.justsend.api.entity.Wallet
 import org.junit.jupiter.api.Assertions.assertThrows
+import kotlin.math.abs
 import kotlin.test.Test
 
 class WalletTests {
@@ -184,7 +185,7 @@ class WalletTests {
   fun `adding and removing float values maintains precision - 24`() {
     val walletWithMoney = wallet.add(Money(usd, 10.123))
     val walletAfterRemove = walletWithMoney.remove(Money(usd, 0.123))
-    assert(Math.abs(walletAfterRemove.getAllBalances()[usd]!! - 10.0) < 0.0001)
+    assert(abs(walletAfterRemove.getAllBalances()[usd]!! - 10.0) < 0.0001)
   }
 
   @Test
