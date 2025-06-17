@@ -75,4 +75,50 @@ class WalletServiceTests {
     verify { walletRepository.save(wallet) }
     verify { walletRepository.save(receiverWallet) }
   }
+
+  @Test
+  fun `getBalances should return wallet balances`() {
+    val balances = mapOf("USD" to 100.0, "EUR" to 50.0)
+    every { wallet.getAllBalances() } returns balances
+
+    val result = walletService.getBalances()
+
+    assertEquals(balances, result)
+    verify { wallet.getAllBalances() }
+  }
+
+  @Test
+  fun `deposit should fail and return failure result on exception`() {
+    val money = Money("USD", 100.0)
+    every { wallet.add(money) } throws IllegalArgumentException("Invalid deposit")
+
+    val result = walletService.deposit(money, wallet)
+
+    assertTrue(result.isFailure)
+    assertTrue(result.exceptionOrNull() is IllegalArgumentException)
+  }
+
+  @Test
+  fun `withdraw should fail and return failure result on exception`() {
+    val money = Money("USD", 100.0)
+    every { wallet.remove(money) } throws IllegalArgumentException("Insufficient funds")
+    every { authService.getUserWallet() } returns wallet
+
+    val result = walletService.withdraw(money)
+
+    assertTrue(result.isFailure)
+    assertTrue(result.exceptionOrNull() is IllegalArgumentException)
+  }
+
+  @Test
+  fun `send should fail if receiver wallet not found`() {
+    val money = Money("USD", 100.0)
+    val receiver = UserInfo(email = "notfound@receiver.com", alias = "notfound")
+    every { walletRepository.findByEmailOrAlias(receiver.email, receiver.alias) } returns null
+
+    val result = walletService.send(money, receiver)
+
+    assertTrue(result.isFailure)
+    assertTrue(result.exceptionOrNull() is IllegalArgumentException)
+  }
 }
