@@ -11,11 +11,11 @@ class WalletUser(HttpUser):
             "Authorization": f"Bearer {FIREBASE_TOKEN}"
         }
 
-    @task(1)
+    @task(2)
     def get_balances(self):
         self.client.get("/api/wallet", headers=self.headers)
 
-    @task(2)
+    @task(3)
     def deposit(self):
         payload = {
             "amount": 10.0,
@@ -37,7 +37,7 @@ class WalletUser(HttpUser):
         }
         self.client.post("/api/wallet/send", json=payload, headers=self.headers)
 
-    @task(2)
+    @task(1)
     def get_transactions(self):
         self.client.get("/api/wallet/transactions", headers=self.headers)
 
