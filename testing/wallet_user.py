@@ -1,15 +1,14 @@
-from locust import HttpUser, task, between
-
+from locust import HttpUser, task
 from get_Firebase_Token import get_firebase_token
 
+FIREBASE_TOKEN = get_firebase_token()
+
 class WalletUser(HttpUser):
-    wait_time = between(1, 3)
     host = "http://localhost:8080"
 
     def on_start(self):
-        self.token = get_firebase_token()
         self.headers = {
-            "Authorization": f"Bearer {self.token}"
+            "Authorization": f"Bearer {FIREBASE_TOKEN}"
         }
 
     @task(1)
@@ -31,11 +30,10 @@ class WalletUser(HttpUser):
             "to": {
                 "email": "iii@iii.com"
             },
-            "money":{
+            "money": {
                 "currency": "USD",
                 "amount": 1.0
             }
-
         }
         self.client.post("/api/wallet/send", json=payload, headers=self.headers)
 
@@ -50,4 +48,3 @@ class WalletUser(HttpUser):
             "currency": "USD"
         }
         self.client.post("/api/wallet/withdraw", json=payload, headers=self.headers)
-

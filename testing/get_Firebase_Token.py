@@ -12,5 +12,10 @@ def get_firebase_token():
         "returnSecureToken": True
     }
     response = requests.post(url, json=payload)
-    response.raise_for_status()
-    return response.json()["idToken"]
+    try:
+        response.raise_for_status()
+        return response.json()["idToken"]
+    except requests.exceptions.HTTPError:
+        print("Status code:", response.status_code)
+        print("Response:", response.text)
+        raise
