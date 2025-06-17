@@ -1,6 +1,5 @@
 from locust import HttpUser, task
 from get_Firebase_Token import get_firebase_token
-import requests
 import os
 import random
 import string
@@ -19,14 +18,14 @@ class WalletUser(HttpUser):
     @task(4)
     def register(self):
         email = f"locustuser_{''.join(random.choices(string.ascii_lowercase, k=8))}@example.com"
-        password = "TestPassword123!"
-        url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={FIREBASE_API_KEY}"
-        payload = {"email": email, "password": password, "returnSecureToken": True}
-        response = requests.post(url, json=payload)
-        if response.status_code == 200:
-            print(f"Registered user: {email}")
+        uuid = ''.join(random.choices(string.ascii_lowercase + string.digits, k=32))
+        payload = {"email": email, "uuid": uuid}
+        url = "/api/user/register"
+        response = self.client.post(url, json=payload)
+        if response.status_code == 200 or response.status_code == 201:
+            print(f"[register] Success: {email} {response.json()}")
         else:
-            print(f"Failed to register user: {email}, {response.text}")
+            print(f"[register] Failed: {email} {response.status_code} {response.text}")
 
     @task(2)
     def get_balances(self):
