@@ -19,7 +19,7 @@ class WalletUser(HttpUser):
     def register(self):
         email = f"locustuser_{''.join(random.choices(string.ascii_lowercase, k=8))}@example.com"
         uuid = ''.join(random.choices(string.ascii_lowercase + string.digits, k=32))
-        payload = {"email": email, "uuid": uuid}
+        payload = {"email": email, "uid": uuid}
         url = "/api/user/register"
         response = self.client.post(url, json=payload)
         if response.status_code == 200 or response.status_code == 201:
@@ -27,11 +27,11 @@ class WalletUser(HttpUser):
         else:
             print(f"[register] Failed: {email} {response.status_code} {response.text}")
 
-    @task(2)
+    @task(3)
     def get_balances(self):
         self.client.get("/api/wallet", headers=self.headers)
 
-    @task(3)
+    @task(2)
     def deposit(self):
         payload = {
             "amount": 10.0,
@@ -43,6 +43,19 @@ class WalletUser(HttpUser):
             print(f"[deposit] Success: {response.json()}")
         else:
             print(f"[deposit] Failed: {response.status_code} {response.text}")
+
+    @task(1)
+    def deposit_fail(self):
+        payload = {
+            "amount": 10.0,
+            "currency": "USD",
+            "bank_routing": 22222222
+        }
+        response = self.client.post("/api/wallet/deposit", json=payload, headers=self.headers)
+        if response.status_code != 200:
+            print(f"[deposit_fail] Expected failure: {response.status_code} {response.text}")
+        else:
+            print(f"[deposit_fail] Unexpected success: {response.json()}")
 
     @task(1)
     def send(self):
@@ -76,3 +89,5 @@ class WalletUser(HttpUser):
             "currency": "USD"
         }
         self.client.post("/api/wallet/withdraw", json=payload, headers=self.headers)
+
+
