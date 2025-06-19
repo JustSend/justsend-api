@@ -2,6 +2,8 @@ package com.justsend.api.controller
 
 import com.justsend.api.dto.Amount
 import com.justsend.api.dto.Currency
+import com.justsend.api.dto.DebinRequest
+import com.justsend.api.dto.DebinResponse
 import com.justsend.api.dto.DepositRequest
 import com.justsend.api.dto.DepositResponse
 import com.justsend.api.dto.Money
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import kotlin.fold
 
-@RestController()
+@RestController
 @RequestMapping("/api/wallet")
 class WalletController(
   @Autowired private val walletService: WalletService,
@@ -34,13 +36,15 @@ class WalletController(
     return ResponseEntity.ok(balances)
   }
 
-  @PostMapping("/deposit")
-  fun deposit(@RequestBody body: DepositRequest): DepositResponse {
+  @PostMapping("/debin")
+  fun debin(@RequestBody body: DebinRequest): ResponseEntity<DebinResponse> {
     val wallet = authService.getUserWallet()
-
     val externalValidation = externalApiClient.validate(body)
+
     if (!externalValidation.valid) {
-      return DepositResponse(false, externalValidation.status, externalValidation.message)
+      return ResponseEntity
+        .badRequest()
+        .body(DebinResponse(false, externalValidation.status, externalValidation.message))
     }
 
     val money = Money(body.currency, body.amount)
@@ -48,39 +52,69 @@ class WalletController(
 
     return result.fold(
       onSuccess = { successMessage ->
-        DepositResponse(true, "success", successMessage)
+        ResponseEntity.ok(DebinResponse(true, "success", successMessage))
       },
       onFailure = { error ->
-        DepositResponse(false, "failure", error.message ?: "Unknown error")
+        ResponseEntity.status(500).body(
+          DebinResponse(false, "failure", error.message ?: "Unknown error")
+        )
+      }
+    )
+  }
+
+  @PostMapping("/deposit")
+  fun deposit(@RequestBody body: DepositRequest): ResponseEntity<DepositResponse> {
+    val wallet = authService.getUserWallet(body.walletId)
+    val money = Money(body.currency, body.amount)
+    val result = walletService.deposit(money, wallet!!)
+
+    return result.fold(
+      onSuccess = { successMessage ->
+        ResponseEntity.ok(DepositResponse(true, successMessage))
+      },
+      onFailure = { error ->
+        ResponseEntity.status(500).body(
+          DepositResponse(false, error.message ?: "Unknown error")
+        )
       }
     )
   }
 
   @PostMapping("/withdraw")
-  fun withdraw(@RequestBody body: Money): SendResponse {
+  fun withdraw(@RequestBody body: Money): ResponseEntity<SendResponse> {
     val result = walletService.withdraw(body)
+
     return result.fold(
       onSuccess = { successMessage ->
-        SendResponse(true, successMessage)
+        ResponseEntity.ok(SendResponse(true, successMessage))
       },
-      onFailure = { error -> SendResponse(false, error.message ?: "Unknown error") }
+      onFailure = { error ->
+        ResponseEntity.status(400).body(
+          SendResponse(false, error.message ?: "Unknown error")
+        )
+      }
     )
   }
 
   @GetMapping("/transactions")
   fun getWalletTransactions(): ResponseEntity<List<TransactionDto>> {
-    val body = walletService.getTransactions()
-    return ResponseEntity.ok(body)
+    val transactions = walletService.getTransactions()
+    return ResponseEntity.ok(transactions)
   }
 
   @PostMapping("/send")
-  fun sendTransaction(@RequestBody request: P2PTransaction): SendResponse {
+  fun sendTransaction(@RequestBody request: P2PTransaction): ResponseEntity<SendResponse> {
     val result = walletService.send(request.money, request.to)
+
     return result.fold(
       onSuccess = { successMessage ->
-        SendResponse(true, successMessage)
+        ResponseEntity.ok(SendResponse(true, successMessage))
       },
-      onFailure = { error -> SendResponse(false, error.message ?: "Unknown error") }
+      onFailure = { error ->
+        ResponseEntity.status(400).body(
+          SendResponse(false, error.message ?: "Unknown error")
+        )
+      }
     )
   }
 }
