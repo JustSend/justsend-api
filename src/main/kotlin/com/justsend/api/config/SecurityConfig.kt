@@ -21,6 +21,7 @@ class SecurityConfig {
       .authorizeHttpRequests {
         it
           .requestMatchers("/api/user/register").permitAll()
+          .requestMatchers("/api/wallet/deposit").permitAll()
           .anyRequest().authenticated()
       }
       .addFilterBefore(FirebaseAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)

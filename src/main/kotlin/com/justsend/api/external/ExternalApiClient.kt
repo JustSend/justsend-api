@@ -1,6 +1,6 @@
 package com.justsend.api.external
 
-import com.justsend.api.dto.DepositRequest
+import com.justsend.api.dto.DebinRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -13,7 +13,7 @@ class ExternalApiClient(
     .baseUrl(baseUrl)
     .build()
 
-  fun validate(req: DepositRequest): ValidationResponse {
+  fun validate(req: DebinRequest): ValidationResponse {
     return client.post()
       .uri("/debin")
       .bodyValue(req)

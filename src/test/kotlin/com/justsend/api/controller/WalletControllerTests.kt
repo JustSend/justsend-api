@@ -46,18 +46,18 @@ class WalletControllerTests {
   }
 
   @Test
-  fun `deposit should succeed when external validation is valid`() {
-    val depositRequest = DepositRequest(50.0, "USD", "111111")
+  fun `debin should succeed when external validation is valid`() {
+    val debinRequest = DebinRequest(50.0, "USD", "111111")
     val wallet = Wallet(alias = "test", email = "test@example.com")
 
     every { authService.getUserWallet() } returns wallet
-    every { externalApiClient.validate(depositRequest) } returns ValidationResponse(true, "OK", "Validated")
+    every { externalApiClient.validate(debinRequest) } returns ValidationResponse(true, "OK", "Validated")
     every { walletService.deposit(Money("USD", 50.0), wallet) } returns Result.success("Deposit successful")
 
     mockMvc.perform(
-      post("/api/wallet/deposit")
+      post("/api/wallet/debin")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(depositRequest))
+        .content(objectMapper.writeValueAsString(debinRequest))
     )
       .andExpect(status().isOk)
       .andExpect(jsonPath("$.success").value(true))
@@ -66,19 +66,19 @@ class WalletControllerTests {
   }
 
   @Test
-  fun `deposit should fail when external validation fails`() {
-    val depositRequest = DepositRequest(50.0, "USD", "222222222")
+  fun `debin should fail when external validation fails`() {
+    val debinRequest = DebinRequest(50.0, "USD", "222222222")
     val wallet = Wallet(alias = "test", email = "test@example.com")
 
     every { authService.getUserWallet() } returns wallet
-    every { externalApiClient.validate(depositRequest) } returns ValidationResponse(false, "ERROR", "Invalid token")
+    every { externalApiClient.validate(debinRequest) } returns ValidationResponse(false, "ERROR", "Invalid token")
 
     mockMvc.perform(
-      post("/api/wallet/deposit")
+      post("/api/wallet/debin")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(depositRequest))
+        .content(objectMapper.writeValueAsString(debinRequest))
     )
-      .andExpect(status().isOk)
+      .andExpect(status().isBadRequest)
       .andExpect(jsonPath("$.success").value(false))
       .andExpect(jsonPath("$.status").value("ERROR"))
       .andExpect(jsonPath("$.message").value("Invalid token"))
@@ -109,7 +109,7 @@ class WalletControllerTests {
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(money))
     )
-      .andExpect(status().isOk)
+      .andExpect(status().isBadRequest)
       .andExpect(jsonPath("$.success").value(false))
       .andExpect(jsonPath("$.message").value("Insufficient funds"))
   }
@@ -166,7 +166,7 @@ class WalletControllerTests {
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(request))
     )
-      .andExpect(status().isOk)
+      .andExpect(status().isBadRequest)
       .andExpect(jsonPath("$.success").value(false))
       .andExpect(jsonPath("$.message").value("Recipient not found"))
   }
