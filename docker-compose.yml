@@ -28,11 +28,6 @@ services:
     command: -p ${POSTGRES_PORT}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    deploy:
-      resources:
-        limits:
-          memory: 1024M
-          cpus: '0.50'
 
 volumes:
   postgres_data:
