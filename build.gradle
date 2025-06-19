@@ -59,7 +59,9 @@ kapt {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+	useJUnitPlatform{
+        excludeTags 'external'
+    }
 }
 
 kover {
