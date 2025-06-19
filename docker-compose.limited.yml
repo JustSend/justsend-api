@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   server:
-    container_name: justsend-api
+    container_name: justsend-api-limited
     build: .
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
@@ -20,7 +20,7 @@ services:
           memory: 1024M
 
   db:
-    container_name: justsend-db
+    container_name: justsend-db-limited
     image: postgres:15
     restart: always
     environment:
